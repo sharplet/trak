@@ -2,7 +2,7 @@
 
 ## Description
 
-Track is a utility for Mac OS X that allows you to quickly make a record of how much time you've spent on various tasks throughout the day.
+Tracker is a utility for Mac OS X that allows you to quickly make a record of how much time you've spent on various tasks throughout the day.
 
 Work logs are stored in `/Users/yourusername/Documents/Tracker/` with the format `YEAR-MONTH-DAY-time-log.txt`.
 
@@ -14,21 +14,41 @@ An example work log that Tracker will create:
     30: uni
     120: tracker
 
+## Installation
+
+Either:
+
+- Copy Tracker.pl to somewhere in your `PATH`
+
+OR
+
+- Copy Tracker.pl to the destination of your choice and create a symlink to tracker in your path, e.g.:
+
+        $ ln -s /path/to/Tracker.pl /usr/bin/track
+
+Adam recommends either creating a symlink called `track` or if you just put Tracker.pl in your `PATH` then create it as an alias like so:
+
+    $ alias track=Tracker.pl
+
+If you don't happen to have Tracker.pl you could also do this:
+
+    $ alias track=/path/to/Tracker.pl
+
 ## Usage
 
-    track <minutes> <description>   # => data entry
-    track -r                        # => reporting
-    track -l                        # => list today's work
+    Tracker.pl <minutes> <description>   # => data entry
+    Tracker.pl -r                        # => reporting
+    Tracker.pl -l                        # => list today's work
 
 Where `<minutes>` is an integer signifying how much time has been spent and `<description>` is a string containing a brief description of the activity (one word is best, but can be any length of string).
 
 Make sure to use
 
-    $ track 30 "Foo bar"
+    $ Tracker.pl 30 "Foo bar"
     
 and not
 
-    $ track 30 Foo bar
+    $ Tracker.pl 30 Foo bar
 
 as the description will be truncated to "Foo".
 

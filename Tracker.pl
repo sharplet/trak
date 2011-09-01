@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
 
 # command:
-#   $ track 30 "I did stuff"
-#   $ track 1h "I did twice as much stuff"
+#   $ Tracker.pl 30 "I did stuff"
+#   $ Tracker.pl 1h "I did twice as much stuff"
 #
 # format:
 #   - First arg is how much time spent
