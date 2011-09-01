@@ -32,6 +32,32 @@ if ($ARGV[0] eq "-r") {
         print STDERR "No time log for today. Track some time first.\n";
     }
 }
+elsif ($ARGV[0] eq "-l") {
+    if (-e $filename) {
+        open REPORTFILE, "< $filename" or die "Couldn't open $filename: $!";
+        @file = <REPORTFILE>;
+        $end = @file;
+        $personal = 0, $total = 0;
+        print "# Today's logged work\n";
+        foreach $line (@file[1..$end-1]) {
+            $line =~ /^(\d+)\:\s+(.+)$/;
+            $minutes = $1;
+            $text = $2;
+            if (!($text =~ /personal|uni|lunch|home/)) {
+                $total += $minutes;
+            }
+            else {
+                $personal += $minutes;
+            }
+            print $minutes."m $text\n";
+        }
+        if ($total > 0) { print "Work time = " . $total/60 . "h\n"; }
+        if ($personal > 0) { print "Personal time = " . $personal/60 . "h\n"; }
+    }
+    else {
+        print STDERR "No time log for today. Track some time first.\n";
+    }
+}
 else {
     # open the output file
     if (!-e $filename) {
