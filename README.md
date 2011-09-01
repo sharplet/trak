@@ -60,3 +60,4 @@ as the description will be truncated to "Foo".
 - Report on days other than today
 - More robust command line args
 - More time formats than just minutes, e.g., handle `###<denom>` where `##` is a decimal number rounded to the nearest 15 minutes (1, 1.5, 0.25) and `<denom>` is some modifier such as `h/hr/hour`, `m/min/minute`. Also, no `<denom>` defaults to minutes.
+- Offer support for an environment variable that defines the default start time (currently hard coded to 8:00 AM)

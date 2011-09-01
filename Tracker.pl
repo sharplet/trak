@@ -49,10 +49,12 @@ elsif ($ARGV[0] eq "-l") {
             else {
                 $personal += $minutes;
             }
-            print $minutes."m $text\n";
+            print "=> ".$minutes."m $text\n";
         }
         if ($total > 0) { print "Work time = " . $total/60 . "h\n"; }
         if ($personal > 0) { print "Personal time = " . $personal/60 . "h\n"; }
+        $newTimeString = to12HourTime(newTimeWithMinutes("8:00", $total + $personal));
+        print "Hours logged until ".$newTimeString." (since 8:00 AM).\n";
     }
     else {
         print STDERR "No time log for today. Track some time first.\n";
@@ -71,4 +73,34 @@ else {
     # process arguments
     ($minutes, $message) = (@ARGV)[0,1];
     print TIMELOG "$minutes: $message\n";
+}
+
+sub newTimeWithMinutes
+{
+    $len = @_;
+    if ($len == 2) {
+        @startTime = split(":", $_[0]);
+        $startMinutes = $startTime[0] * 60 + $startTime[1];
+        $endMinutes = $startMinutes + $_[1];
+        $newHours = int($endMinutes / 60);
+        $newMinutes = $endMinutes % 60;
+        $newFormatted = sprintf("%d:%02d", $newHours, $newMinutes);
+        return $newFormatted;
+    }
+}
+
+sub to12HourTime
+{
+    @time = split(":", $_[0]);
+    if ($time[0] >= 12) {
+        $time[0] -= 12;
+        $suffix = "PM";
+    }
+    else {
+        if ($time[0] == 0) {
+            $time[0] = 12;
+        }
+        $suffix = "AM";
+    }
+    return join(":", @time)." $suffix";
 }
