@@ -23,16 +23,7 @@ $filename = $datadir.$fdate."-time-log.txt";
 $filename =~ s{ ^ ~ ( [^/]* ) } { $1 ? (getpwnam($1))[7] : ( $ENV{HOME} || $ENV{LOGDIR} || (getpwuid($>))[7] ) }ex;
 
 
-if ($ARGV[0] eq "-r") {
-    if (-e $filename) {
-        open REPORTFILE, "< $filename" or die "Couldn't open $filename: $!";
-        print "# Today's report\n";
-    }
-    else {
-        print STDERR "No time log for today. Track some time first.\n";
-    }
-}
-elsif ($ARGV[0] eq "-l") {
+if ($ARGV[0] eq "-r" || $ARGV[0] eq "-l") {
     if (-e $filename) {
         open REPORTFILE, "< $filename" or die "Couldn't open $filename: $!";
         @file = <REPORTFILE>;

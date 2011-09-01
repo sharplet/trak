@@ -1,5 +1,8 @@
 # Tracker --- track blocks of time from the command line
 
+Tracker.pl, v0.1 (Sep 1, 2011)  
+Written by Adam Sharp  
+
 ## Description
 
 Tracker is a utility for Mac OS X that allows you to quickly make a record of how much time you've spent on various tasks throughout the day.
@@ -54,10 +57,25 @@ as the description will be truncated to "Foo".
 
 ## To do
 
-- Decide whether -l switch should be part of -r (maybe a synonym)
 - Make the personal time search more configurable by putting keywords to search in an array
 - Reporting feature (calculate total work done for each task)
 - Report on days other than today
 - More robust command line args
+- Add a `-h` usage/help switch
 - More time formats than just minutes, e.g., handle `###<denom>` where `##` is a decimal number rounded to the nearest 15 minutes (1, 1.5, 0.25) and `<denom>` is some modifier such as `h/hr/hour`, `m/min/minute`. Also, no `<denom>` defaults to minutes.
 - Offer support for an environment variable that defines the default start time (currently hard coded to 8:00 AM)
+
+## Change log
+
+### v0.1
+
+Added:
+
+- Tracker.pl -l will now tell you what time you've logged time until. For example, if your start time is 8:00 AM and you've logged 3 hours, it will output the following:
+    
+        Hours logged until 11:00 AM (since 8:00 AM).
+
+Changed:
+
+- `-l` and `-r` switches are now synonyms
+- Formatting improvements
