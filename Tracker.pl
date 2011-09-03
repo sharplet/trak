@@ -9,7 +9,7 @@
 #   - Second arg is a description
 
 # place where data is stored
-$datadir = "~/Documents/Tracker/";
+$datadir = "$ENV{'HOME'}/Documents/Tracker/";
 `mkdir -p $datadir`;
 
 # get today's date, formatted
@@ -18,10 +18,6 @@ $fdate = sprintf("%04d-%02d-%02d", $year + 1900, $month + 1, $day);
 
 # set the output file name
 $filename = $datadir.$fdate."-time-log.txt";
-
-# expand the ~ to user's home dir: http://docstore.mik.ua/orelly/perl/cookbook/ch07_04.htm
-$filename =~ s{ ^ ~ ( [^/]* ) } { $1 ? (getpwnam($1))[7] : ( $ENV{HOME} || $ENV{LOGDIR} || (getpwuid($>))[7] ) }ex;
-
 
 if ($ARGV[0] eq "-r" || $ARGV[0] eq "-l" || @ARGV == 0) {
     if (-e $filename) {
@@ -56,7 +52,7 @@ if ($ARGV[0] eq "-r" || $ARGV[0] eq "-l" || @ARGV == 0) {
 }
 else {
     # process arguments
-    my $minutes = $ARGV[0];
+    my $minutes = processTimeArgument($ARGV[0]);
     my $message = join(" ", @ARGV[1..@ARGV-1]);
     
     # open the output file
@@ -79,6 +75,37 @@ else {
 
 
 
+
+# expects a single argument - the time argument in the format ##m or ##h
+# if argument has no m/h qualifier, assume m
+# returns a number of minutes
+sub processTimeArgument
+{
+    if (@_ == 1) {
+        my $minutes;
+        if ($_[0] =~ /^(\d*\.?\d+)([mh])?$/i) {
+            if ($2 ne "h") {
+                $minutes = $1;
+            }
+            else {
+                my $hours = $1;
+                $minutes = $hours * 60;
+            }
+            
+            # check enough time has been logged
+            if ($minutes < 15) {
+                print STDERR "You must log at least 15 minutes.\n";
+                exit(1);
+            }
+            
+            return nearest15Minutes(nearestInt($minutes));
+        }
+        else {
+            die "Incorrectly formatted argument";
+            exit(1);
+        }
+    }
+}
 
 sub newTimeWithMinutes
 {
@@ -129,6 +156,13 @@ sub startTimeInMinutes
     my $currentTimeInMinutes = timeToMinutes(currentTimeFormatted());
     my $rounded = nearest15Minutes($currentTimeInMinutes);
     return $rounded - $_[0];
+}
+
+sub nearestInt
+{
+    my $integerPart = int($_[0]);
+    my $decimalPart = $_[0] - $integerPart;
+    return $decimalPart >= 0.5 ? $integerPart + 1 : $integerPart;
 }
 
 # expects an integer
