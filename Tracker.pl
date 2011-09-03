@@ -106,13 +106,13 @@ sub processTimeArgument
 {
     if (@_ == 1) {
         my $minutes;
-        if ($_[0] =~ /^(\d*\.?\d+)([mh])?$/i) {
-            if ($2 ne "h") {
-                $minutes = $1;
+        if ($_[0] =~ /^(\d*\.?\d+)((m|min|minute|minutes)|(h|hr|hour|hours))?$/i) {
+            my $time = $1, $modifier = $2;
+            if ($modifier =~ /h.*/) {
+                $minutes = $time * 60;
             }
             else {
-                my $hours = $1;
-                $minutes = $hours * 60;
+                $minutes = $time;
             }
             
             # check enough time has been logged
