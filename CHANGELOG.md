@@ -1,5 +1,22 @@
 # Change log
 
+## v0.3
+
+Added:
+
+- Report now calculates the total time spent on each task throughout the day
+- Time can now be logged as either minutes or hours. The time argument can take
+  the format `##<denom>`, where `##` is the amount of time spent, and `<denom>`
+  signifies hours (`h/hr/hour/hours`) or minutes (`m/min/minute/minutes`).
+
+Changed:
+
+- Report formatting improvements
+
+Fixed:
+
+- Time wrap-around bug where if time logged passed midnight AM/PM would display incorrectly.
+
 ## v0.2.1
 
 Changed:

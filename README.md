@@ -1,6 +1,6 @@
 # Tracker --- track blocks of time from the command line
 
-Tracker.pl, v0.2.1 (Sep 2, 2011)  
+Tracker.pl, v0.3 (Sep 3, 2011)  
 Written by Adam Sharp  
 
 ## Description
@@ -43,12 +43,18 @@ If you don't happen to have Tracker.pl you could also do this:
 
 ## Usage
 
-    Tracker.pl <minutes> <description>   # => data entry
-    Tracker.pl -r                        # => reporting
-    Tracker.pl -l                        # => list today's work
+    Tracker.pl ##<denom> <description>   # => data entry
+    Tracker.pl [-r|-l]                   # => reporting
 
-Where `<minutes>` is an integer signifying how much time has been spent and
-`<description>` is a string containing a brief description of the activity.
+Where:
+
+- `##` is a decimal signifying how much time has been spent.
+- `<denom>` is either hours (`h/hr/hour/hours`) or minutes
+  (`m/min/minute/minutes`). `<denom>` is optional and if ommitted, Tracker
+  will interpret the time entered as minutes.
+- `<description>` is a string containing a brief description of the activity.
+
+### Descriptions
 
 You can use either
 
@@ -60,16 +66,20 @@ or
 
 as everything after the first argument is considered the name of the task.
 
+### Entering time
+
+These are all valid commands:
+
+    $ Tracker.pl 1h Write Tracker documentation       # => 1 hour
+    $ Tracker.pl 30min Rewrite Tracker documentation  # => 30 minutes
+    $ Tracker.pl 4hours Refactor Tracker              # => 4 hours
+    $ Tracker.pl 15 Lunch                             # => 15 minutes
+
 ## To do
 
 - Make the personal time search more configurable by putting keywords to search
   in an array
-- Calculate total work done for each task
 - Report on days other than today
 - More robust command line args
 - Add a `-h` usage/help switch
-- More time formats than just minutes, e.g., handle `###<denom>` where `##` is a
-  decimal number rounded to the nearest 15 minutes (1, 1.5, 0.25) and `<denom>`
-  is some modifier such as `h/hr/hour`, `m/min/minute`. Also, no `<denom>`
-  defaults to minutes.
 - Refactor
