@@ -49,22 +49,8 @@ if ($ARGV[0] eq "-r" || $ARGV[0] eq "-l" || @ARGV == 0) {
         
         # print the report
         print "# Today's logged work\n";
-        
-        my $workTotal, $personalTotal;        
-        if (%work > 0) {
-            foreach (values(%work)) { $workTotal += $_; }
-            print "# Work time (".timeString($workTotal).")\n";
-            while (($task, $timeSpent) = each(%work)) {
-                print "=> " . timeString($timeSpent) . ": $task\n";
-            }
-        }
-        if (%personal > 0) {
-            foreach (values(%personal)) { $personalTotal += $_; }
-            print "# Personal time (".timeString($personalTotal).")\n";
-            while (($task, $timeSpent) = each(%personal)) {
-                print "=> " . timeString($timeSpent) . ": $task\n";
-            }
-        }
+        my $workTotal = printSubReport(\%work, "Work");
+        my $personalTotal = printSubReport(\%personal, "Personal");
         
         $newTimeString = to12HourTime(newTimeWithMinutes($startTime, $workTotal + $personalTotal));
         print "Hours logged until ".$newTimeString." (since ".to12HourTime($startTime).").\n";
@@ -136,6 +122,24 @@ sub processTimeArgument
 sub timeString
 {
     return $_[0] >= 60 ? $_[0]/60 . "h" : $_[0] . "m";
+}
+
+# expects a hash of tasks mapped to time spent, and a sub-report name
+#   (e.g., work, personal)
+# prints a formatted sub-report
+# returns the total hours worked
+sub printSubReport
+{
+    my %report = %{$_[0]};
+    my $name = $_[1], my $total;
+    if (%report > 0) {
+        foreach (values(%report)) { $total += $_; }
+        print "# $name time (".timeString($total).")\n";
+        while (($task, $timeSpent) = each(%report)) {
+            print "=> " . timeString($timeSpent) . ": $task\n";
+        }
+    }
+    return $total;
 }
 
 sub newTimeWithMinutes
@@ -216,6 +220,10 @@ sub to12HourTime
 {
     my @time = split(":", $_[0]);
     my $suffix;
+    
+    # if we've passed midnight, wrap around
+    while ($time[0] >= 24) { $time[0] -= 24; }
+    
     if ($time[0] >= 12) {
         if ($time[0] > 12) { $time[0] -= 12; }
         $suffix = "PM";
