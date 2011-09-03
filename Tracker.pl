@@ -21,29 +21,52 @@ $filename = $datadir.$fdate."-time-log.txt";
 
 if ($ARGV[0] eq "-r" || $ARGV[0] eq "-l" || @ARGV == 0) {
     if (-e $filename) {
+        # open the file and get it as an array
         open REPORTFILE, "< $filename" or die "Couldn't open $filename: $!";
         @file = <REPORTFILE>;
-        $end = @file;
-        $personal = 0, $total = 0;
+        
+        # The keys for each hash are the titles of the various tasks logged.
+        # The values are the total time spent on the task.
+        my %personal, %work;
+        
+        # find the start time for the day we're reporting on
         @firstLine = split(/\ /, $file[0]);
         my $startTime = $firstLine[1];
-        print "# Today's logged work\n";
-        foreach $line (@file[1..$end-1]) {
+        
+        # process each line of the file
+        foreach $line (@file[1..@file-1]) {
             chomp($line);
             $line =~ /^(\d+)\:\s+(.+)$/;
             $minutes = $1;
             $text = $2;
             if (!($text =~ /personal|uni|lunch|home/)) {
-                $total += $minutes;
+                $work{$text} += $minutes;
             }
             else {
-                $personal += $minutes;
+                $personal{$text} += $minutes;
             }
-            print "=> ".$minutes."m: $text\n";
         }
-        if ($total > 0) { print "Work time = " . $total/60 . "h\n"; }
-        if ($personal > 0) { print "Personal time = " . $personal/60 . "h\n"; }
-        $newTimeString = to12HourTime(newTimeWithMinutes($startTime, $total + $personal));
+        
+        # print the report
+        print "# Today's logged work\n";
+        
+        my $workTotal, $personalTotal;        
+        if (%work > 0) {
+            foreach (values(%work)) { $workTotal += $_; }
+            print "# Work time (".timeString($workTotal).")\n";
+            while (($task, $timeSpent) = each(%work)) {
+                print "=> " . timeString($timeSpent) . ": $task\n";
+            }
+        }
+        if (%personal > 0) {
+            foreach (values(%personal)) { $personalTotal += $_; }
+            print "# Personal time (".timeString($personalTotal).")\n";
+            while (($task, $timeSpent) = each(%personal)) {
+                print "=> " . timeString($timeSpent) . ": $task\n";
+            }
+        }
+        
+        $newTimeString = to12HourTime(newTimeWithMinutes($startTime, $workTotal + $personalTotal));
         print "Hours logged until ".$newTimeString." (since ".to12HourTime($startTime).").\n";
     }
     else {
@@ -105,6 +128,14 @@ sub processTimeArgument
             exit(1);
         }
     }
+}
+
+# expects a number of minutes
+# if less than 60 returns the number with an "m"
+# otherwise converts to hours and adds an "h"
+sub timeString
+{
+    return $_[0] >= 60 ? $_[0]/60 . "h" : $_[0] . "m";
 }
 
 sub newTimeWithMinutes
