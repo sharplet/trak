@@ -77,9 +77,26 @@ These are all valid commands:
 
 ## To do
 
-- Make the personal time search more configurable by putting keywords to search
-  in an array
 - Report on days other than today
 - More robust command line args
 - Add a `-h` usage/help switch
-- Refactor
+- Make the personal time search more configurable by putting keywords to
+  search in an array
+- Have the different types of reports, and keywords for those reports,
+  completely stored in a configuration file. The last category in the
+  file is the default report. Because keywords for custom reports would
+  work on a whitelist system, everything that doesn't match goes into
+  the default. For example:
+
+        # Personal
+        lunch
+        uni
+        news
+        # Default
+        Work
+
+- Have the keywords in the configuration file actually be regexes. When
+  reading the config file, any empty lines or whitespace are ignored.
+- Give an estimate of completion time, with a configurable default for
+  the length of the work day. Also take into account the default length
+  of lunch break (configurable) if lunch hasn't yet been logged.
