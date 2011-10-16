@@ -53,7 +53,8 @@ if ($ARGV[0] eq "-r" || $ARGV[0] eq "-l" || @ARGV == 0) {
         my $personalTotal = printSubReport(\%personal, "Personal");
         
         $newTimeString = to12HourTime(newTimeWithMinutes($startTime, $workTotal + $personalTotal));
-        print "Hours logged until ".$newTimeString." (since ".to12HourTime($startTime).").\n";
+        print "Hours logged until ".$newTimeString." (since ".to12HourTime($startTime)."). ";
+        print "Currently " . to12HourTime(currentTimeFormatted()) . ".\n";
     }
     else {
         print STDERR "No time log for today. Track some time first.\n";
