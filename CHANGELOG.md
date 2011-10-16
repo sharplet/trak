@@ -1,5 +1,18 @@
 # Change log
 
+## v0.4 (2011-10-17)
+
+Added:
+
+* If the EDITOR environment variable is set, this is now used by default
+  to edit a log file with `track -e`.
+
+* The current time is displayed at the end of the report, like so:
+
+        # Today's logged work
+        ...
+        Hours logged until 9:30 AM (since 9:15 AM). Currently 10:13 AM.
+
 ## v0.3
 
 Added:
