@@ -60,6 +60,20 @@ if ($ARGV[0] eq "-r" || $ARGV[0] eq "-l" || @ARGV == 0) {
         print STDERR "No time log for today. Track some time first.\n";
     }
 }
+elsif ($ARGV[0] eq "-e") {
+    if (-e $filename) {
+        if (exists $ENV{'EDITOR'}) {
+            exec("$ENV{'EDITOR'} $filename");
+        }
+        else {
+            `open $filename`;
+        }
+        exit(0);
+    }
+    else {
+        die "Couldn't open $filename: $!";
+    }
+}
 else {
     # process arguments
     my $minutes = processTimeArgument($ARGV[0]);
