@@ -38,15 +38,16 @@ put Tracker.pl in your `PATH` then create it as an alias like so:
 
     $ alias track=Tracker.pl
 
-If you don't happen to have Tracker.pl you could also do this:
+If you don't happen to have Tracker.pl in your `PATH` you could also do
+this:
 
     $ alias track=/path/to/Tracker.pl
 
 ## Usage
 
-    Tracker.pl ##<denom> <description>  # => data entry
-    Tracker.pl [-r|-l]                  # => reporting
-    Tracker.pl -e                       # => manually edit time log
+    Tracker.pl [-d|--date DATE] ##<denom> <description>  # => data entry
+    Tracker.pl [-d|--date DATE] [-r|-l]                  # => reporting
+    Tracker.pl [-d|--date DATE] -e                       # => manually edit time log
 
 Where:
 
@@ -56,6 +57,9 @@ Where:
   Tracker will interpret the time entered as minutes.
 * `<description>` is a string containing a brief description of the
   activity.
+* `DATE` is a string of the format `YYYY-MM-DD` which represents any
+  date. This effects any of Tracker's modes, i.e., insertion, editing or
+  reporting.
 
 ### Descriptions
 
@@ -81,8 +85,8 @@ These are all valid commands:
 
 ## To do
 
-* Report on days other than today
-* More robust command line args
+* Proper handling of incorrectly formatted dates
+* Write a report that gives a weekly breakdown given a date in that week
 * Add a `-h` usage/help switch
 * Make the personal time search more configurable by putting keywords to
   search in an array

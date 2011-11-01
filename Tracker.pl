@@ -8,18 +8,67 @@
 #   - First arg is how much time spent
 #   - Second arg is a description
 
+use Getopt::Long;
+Getopt::Long::Configure ("bundling");
+
 # place where data is stored
 $datadir = "$ENV{'HOME'}/Documents/Tracker/";
 `mkdir -p $datadir`;
 
-# get today's date, formatted
+# define command line options
+my $do_report = 0;
+my $do_edit = 0;
+my $date_arg = '';
+my $RETVAL = GetOptions('l|r|report' => \$do_report,
+                        'd|date=s' => \$date_arg,
+                        'e|edit' => \$do_edit);
+
+# if there were invalid options, exit
+if (!$RETVAL) {
+    exit($RETVAL);
+}
+
+# all valid options have been processed, so figure out which mode
+# we're in...
+my $MODE = '';
+
+# if we found a -r or -l option, ignore everything else
+if ($do_report) {
+    $MODE = 'report';
+}
+# now check if the user wants edit mode
+elsif ($do_edit) {
+    $MODE = 'edit';
+}
+# if there are still unprocessed args (that didn't look like switches),
+# we're in insert mode
+elsif (@ARGV > 0) {
+    $MODE = 'insert';
+}
+# if all else fails, there were probably no args to begin with, so we're
+# in report mode
+else {
+    $MODE = 'report';
+}
+
 ($day, $month, $year) = (localtime)[3,4,5];
-$fdate = sprintf("%04d-%02d-%02d", $year + 1900, $month + 1, $day);
+$today = sprintf("%04d-%02d-%02d", $year + 1900, $month + 1, $day);
+$fdate = '';
+
+# did the user supply a date argument that isn't today?
+if ($date_arg ne $today) {
+    $fdate = $date_arg;
+}
+# otherwise use today's date, formatted, and set date_arg to be false
+else {
+    $fdate = $today;
+    $date = '';
+}
 
 # set the output file name
 $filename = $datadir.$fdate."-time-log.txt";
 
-if ($ARGV[0] eq "-r" || $ARGV[0] eq "-l" || @ARGV == 0) {
+if ($MODE eq 'report') {
     if (-e $filename) {
         # open the file and get it as an array
         open REPORTFILE, "< $filename" or die "Couldn't open $filename: $!";
@@ -48,19 +97,34 @@ if ($ARGV[0] eq "-r" || $ARGV[0] eq "-l" || @ARGV == 0) {
         }
         
         # print the report
-        print "# Today's logged work\n";
+        if ($date_arg) {
+            print "# Logged work for $fdate\n";
+        }
+        else {
+            print "# Today's logged work\n";
+        }
         my $workTotal = printSubReport(\%work, "Work");
         my $personalTotal = printSubReport(\%personal, "Personal");
         
         $newTimeString = to12HourTime(newTimeWithMinutes($startTime, $workTotal + $personalTotal));
         print "Hours logged until ".$newTimeString." (since ".to12HourTime($startTime)."). ";
-        print "Currently " . to12HourTime(currentTimeFormatted()) . ".\n";
+        
+        # if we're reporting for today, print the current time
+        if (!$date_arg) {
+            print "Currently " . to12HourTime(currentTimeFormatted()) . ".";
+        }
+        print "\n";
     }
     else {
-        print STDERR "No time log for today. Track some time first.\n";
+        if ($date_arg) {
+            print STDERR "No time log for $fdate. Track some time first.\n";
+        }
+        else {
+            print STDERR "No time log for today. Track some time first.\n";
+        }
     }
 }
-elsif ($ARGV[0] eq "-e") {
+elsif ($MODE eq 'edit') {
     if (-e $filename) {
         if (exists $ENV{'EDITOR'}) {
             exec("$ENV{'EDITOR'} $filename");
@@ -74,7 +138,17 @@ elsif ($ARGV[0] eq "-e") {
         die "Couldn't open $filename: $!";
     }
 }
-else {
+elsif ($MODE eq 'insert') {
+    if ($date_arg) {
+        print "WARNING: Adding time to a day other than today is not recommended.\n";
+        print "Continue? (y/n) ";
+        $input = <STDIN>;
+        if (!($input =~ /^y(es)?/i)) {
+            print STDERR "Timelog update cancelled.\n";
+            exit(1);
+        }
+    }
+    
     # process arguments
     my $minutes = processTimeArgument($ARGV[0]);
     my $message = join(" ", @ARGV[1..@ARGV-1]);
@@ -92,6 +166,9 @@ else {
     
     # print the logged time
     print TIMELOG "$minutes: $message\n";
+}
+else {
+    die("Couldn't determine the correct mode (I was given '$MODE'):$!");
 }
 
 
@@ -125,7 +202,7 @@ sub processTimeArgument
             return nearest15Minutes(nearestInt($minutes));
         }
         else {
-            die "Incorrectly formatted argument";
+            print STDERR "Incorrectly formatted argument.\n";
             exit(1);
         }
     }
