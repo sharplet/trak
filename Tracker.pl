@@ -56,7 +56,7 @@ $today = sprintf("%04d-%02d-%02d", $year + 1900, $month + 1, $day);
 $fdate = '';
 
 # did the user supply a date argument that isn't today?
-if ($date_arg ne $today) {
+if ($date_arg && $date_arg ne $today) {
     $fdate = $date_arg;
 }
 # otherwise use today's date, formatted, and set date_arg to be false
