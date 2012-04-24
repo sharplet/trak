@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env ruby
 
 # command:
 #   $ Tracker.pl 30 "I did stuff"
@@ -8,48 +8,38 @@
 #   - First arg is how much time spent
 #   - Second arg is a description
 
-use Getopt::Long;
-Getopt::Long::Configure ("bundling");
+require 'trollop'
 
 # place where data is stored
-$datadir = "$ENV{'HOME'}/Documents/Tracker/";
-`mkdir -p $datadir`;
+datadir = "#{ENV['HOME']}/Documents/Tracker/"
+%x[mkdir -p #{datadir}]
 
 # define command line options
-my $do_report = 0;
-my $do_edit = 0;
-my $date_arg = '';
-my $RETVAL = GetOptions('l|r|report' => \$do_report,
-                        'd|date=s' => \$date_arg,
-                        'e|edit' => \$do_edit);
-
-# if there were invalid options, exit
-if (!$RETVAL) {
-    exit($RETVAL);
-}
+opts = Trollop::options do
+  opt :report, "Reporting mode", :short => '-l'
+  opt :edit, "Edit mode"
+  opt :date, "The date", :type => String
+end
 
 # all valid options have been processed, so figure out which mode
 # we're in...
-my $MODE = '';
-
+#
 # if we found a -r or -l option, ignore everything else
-if ($do_report) {
-    $MODE = 'report';
-}
+if opts[:report]
+  MODE = 'report'
 # now check if the user wants edit mode
-elsif ($do_edit) {
-    $MODE = 'edit';
-}
+elsif opts[:edit]
+  MODE = 'edit'
 # if there are still unprocessed args (that didn't look like switches),
 # we're in insert mode
-elsif (@ARGV > 0) {
-    $MODE = 'insert';
-}
+elsif ARGV.length > 0
+  MODE = 'insert'
 # if all else fails, there were probably no args to begin with, so we're
 # in report mode
-else {
-    $MODE = 'report';
-}
+else
+  MODE = 'report'
+end
+__END__
 
 ($day, $month, $year) = (localtime)[3,4,5];
 $today = sprintf("%04d-%02d-%02d", $year + 1900, $month + 1, $day);
