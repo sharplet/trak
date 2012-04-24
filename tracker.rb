@@ -39,21 +39,18 @@ elsif ARGV.length > 0
 else
   MODE = 'report'
 end
-__END__
 
-($day, $month, $year) = (localtime)[3,4,5];
-$today = sprintf("%04d-%02d-%02d", $year + 1900, $month + 1, $day);
-$fdate = '';
+today = Time.now.strftime '%F'
 
 # did the user supply a date argument that isn't today?
-if ($date_arg && $date_arg ne $today) {
-    $fdate = $date_arg;
-}
+if opts[:date] && opts[:date] != today
+  fdate = opts[:date]
 # otherwise use today's date, formatted, and set date_arg to be false
-else {
-    $fdate = $today;
-    $date = '';
-}
+else
+  fdate = today
+  opts[:date] = nil
+end
+__END__
 
 # set the output file name
 $filename = $datadir.$fdate."-time-log.txt";
