@@ -219,20 +219,6 @@ sub printSubReport
     return $total;
 }
 
-sub newTimeWithMinutes
-{
-    my $len = @_;
-    if ($len == 2) {
-        my @startTime = split(":", $_[0]);
-        my $startMinutes = $startTime[0] * 60 + $startTime[1];
-        my $endMinutes = $startMinutes + $_[1];
-        my $newHours = int($endMinutes / 60);
-        my $newMinutes = $endMinutes % 60;
-        my $newFormatted = sprintf("%d:%02d", $newHours, $newMinutes);
-        return $newFormatted;
-    }
-}
-
 # expects a time string formatted HH24:MM
 sub timeToMinutes
 {
@@ -254,12 +240,6 @@ sub minutesToTime
         my $hours = int($totalMinutes / 60);
         return "$hours:$minutes";
     }
-}
-
-sub currentTimeFormatted
-{
-    (my $currentMinutes, my $currentHours) = (localtime)[1,2];
-    return $currentHours . ":" . sprintf("%02d", $currentMinutes);
 }
 
 # expects an integer which is the amount of minutes logged
