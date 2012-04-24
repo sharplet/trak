@@ -193,32 +193,6 @@ sub processTimeArgument
     }
 }
 
-# expects a number of minutes
-# if less than 60 returns the number with an "m"
-# otherwise converts to hours and adds an "h"
-sub timeString
-{
-    return $_[0] >= 60 ? $_[0]/60 . "h" : $_[0] . "m";
-}
-
-# expects a hash of tasks mapped to time spent, and a sub-report name
-#   (e.g., work, personal)
-# prints a formatted sub-report
-# returns the total hours worked
-sub printSubReport
-{
-    my %report = %{$_[0]};
-    my $name = $_[1], my $total;
-    if (%report > 0) {
-        foreach (values(%report)) { $total += $_; }
-        print "# $name time (".timeString($total).")\n";
-        while (($task, $timeSpent) = each(%report)) {
-            print "=> " . timeString($timeSpent) . ": $task\n";
-        }
-    }
-    return $total;
-}
-
 # expects a time string formatted HH24:MM
 sub timeToMinutes
 {
