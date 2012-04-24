@@ -9,6 +9,7 @@
 #   - Second arg is a description
 
 require 'trollop'
+require './tracker_util'
 
 # place where data is stored
 datadir = "#{ENV['HOME']}/Documents/Tracker/"
@@ -50,67 +51,64 @@ else
   fdate = today
   opts[:date] = nil
 end
-__END__
 
 # set the output file name
-$filename = $datadir.$fdate."-time-log.txt";
+filename = "#{datadir}#{fdate}-time-log.txt"
 
-if ($MODE eq 'report') {
-    if (-e $filename) {
-        # open the file and get it as an array
-        open REPORTFILE, "< $filename" or die "Couldn't open $filename: $!";
-        @file = <REPORTFILE>;
-        
-        # The keys for each hash are the titles of the various tasks logged.
-        # The values are the total time spent on the task.
-        my %personal, %work;
-        
-        # find the start time for the day we're reporting on
-        @firstLine = split(/\ /, $file[0]);
-        my $startTime = $firstLine[1];
-        
-        # process each line of the file
-        foreach $line (@file[1..@file-1]) {
-            chomp($line);
-            $line =~ /^(\d+)\:\s+(.+)$/;
-            $minutes = $1;
-            $text = $2;
-            if (!($text =~ /personal|uni|lunch|home/)) {
-                $work{$text} += $minutes;
-            }
-            else {
-                $personal{$text} += $minutes;
-            }
-        }
-        
-        # print the report
-        if ($date_arg) {
-            print "# Logged work for $fdate\n";
-        }
-        else {
-            print "# Today's logged work\n";
-        }
-        my $workTotal = printSubReport(\%work, "Work");
-        my $personalTotal = printSubReport(\%personal, "Personal");
-        
-        $newTimeString = to12HourTime(newTimeWithMinutes($startTime, $workTotal + $personalTotal));
-        print "Hours logged until ".$newTimeString." (since ".to12HourTime($startTime)."). ";
-        
-        # if we're reporting for today, print the current time
-        if (!$date_arg) {
-            print "Currently " . to12HourTime(currentTimeFormatted()) . ".";
-        }
-        print "\n";
-    }
-    else {
-        if ($date_arg) {
-            print STDERR "No time log for $fdate. Track some time first.\n";
-        }
-        else {
-            print STDERR "No time log for today. Track some time first.\n";
-        }
-    }
-}
+if MODE == 'report'
+  if File.exist? filename
+    # open the file and get it as an array
+    begin
+      file = File.open(filename).readlines.map &:chomp
+    rescue
+      STDERR.puts $!
+      exit 1
+    end
+    
+    # The keys for each hash are the titles of the various tasks logged.
+    # The values are the total time spent on the task.
+    work = {}
+    personal = {}
+    
+    # find the start time for the day we're reporting on
+    startTime = file.first.split[1]
+    
+    # process each line of the file
+    file[1..file.size].each do |line|
+      minutes, text = line.split(': ')
+      unless text =~ /personal|uni|lunch|home/
+        work[text] = 0 unless work.include? text
+        work[text] += minutes.to_i
+      else
+        personal[text] = 0 unless personal.include? text
+        personal[text] += minutes.to_i
+      end
+    end
+    
+    # print the report
+    if opts[:date]
+        puts "# Logged work for #{fdate}"
+    else
+        puts "# Today's logged work"
+    end
+    
+    workTotal = TrackerUtil::printSubReport(work, "Work")
+    personalTotal = TrackerUtil::printSubReport(personal, "Personal")
+    
+    newTimeString = TrackerUtil::to12HourTime(TrackerUtil::newTimeWithMinutes(startTime, workTotal + personalTotal))
+    puts "Hours logged until #{newTimeString}. (since #{TrackerUtil::to12HourTime(startTime)}.). "
+    
+    # if we're reporting for today, print the current time
+    puts "Currently #{TrackerUtil::to12HourTime(TrackerUtil::currentTimeFormatted())}." unless opts[:date]
+  else
+    if opts[:date]
+      STDERR.puts "No time log for #{fdate}. Track some time first."
+    else
+      STDERR.puts "No time log for today. Track some time first.\n"
+    end
+  end
+end
+__END__
 elsif ($MODE eq 'edit') {
     if (-e $filename) {
         if (exists $ENV{'EDITOR'}) {
