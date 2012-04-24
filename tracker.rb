@@ -96,7 +96,7 @@ if MODE == 'report'
     personalTotal = TrackerUtil::printSubReport(personal, "Personal")
     
     newTimeString = TrackerUtil::to12HourTime(TrackerUtil::newTimeWithMinutes(startTime, workTotal + personalTotal))
-    puts "Hours logged until #{newTimeString}. (since #{TrackerUtil::to12HourTime(startTime)}.). "
+    puts "Hours logged until #{newTimeString}. (since #{TrackerUtil::to12HourTime(startTime)}). "
     
     # if we're reporting for today, print the current time
     puts "Currently #{TrackerUtil::to12HourTime(TrackerUtil::currentTimeFormatted())}." unless opts[:date]
@@ -291,27 +291,4 @@ sub nearest15Minutes
             return $basetime;
         }
     }
-}
-
-sub to12HourTime
-{
-    my @time = split(":", $_[0]);
-    my $suffix;
-    
-    # if we've passed midnight, wrap around
-    while ($time[0] >= 24) { $time[0] -= 24; }
-    
-    if ($time[0] >= 12) {
-        if ($time[0] > 12) { $time[0] -= 12; }
-        $suffix = "PM";
-    }
-    else {
-        if ($time[0] == 0) {
-            $time[0] = 12;
-        }
-        $suffix = "AM";
-    }
-    chomp($time[1]);
-    sprintf("%02d", $time[1]);
-    return join(":", @time)." $suffix";
 }
