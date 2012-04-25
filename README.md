@@ -35,10 +35,9 @@ An example work log that trak will create:
 
 ## Installation
 
-Check out this repository and then create a symlink to bin/trak
-somewhere in your path:
+Trak is available from [RubyGems](https://rubygems.org/gems/trak):
 
-        $ ln -s <repo>/bin/trak /usr/bin/trak
+    $ gem install trak
 
 ## Usage
 
