@@ -25,6 +25,11 @@ opts = Trollop::options do
   opt :debug, "Debugging mode", :short => "-i"
 end
 
+$g_opts = opts
+def debug(steps = 1)
+  debugger if $g_opts[:debug]
+end
+
 # all valid options have been processed, so figure out which mode
 # we're in...
 #
@@ -141,7 +146,7 @@ elsif MODE == 'insert'
   
   # open the output file
   first_time = !File.exist?(filename)
-  debugger if opts[:debug]
+  debug
   begin
     File.open filename, 'a', :autoclose => true do |file|
       if first_time
