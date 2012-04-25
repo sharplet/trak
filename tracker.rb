@@ -9,6 +9,8 @@
 #   - Second arg is a description
 
 require 'trollop'
+require 'debugger'
+
 require './tracker_util'
 
 # place where data is stored
@@ -17,9 +19,10 @@ datadir = "#{ENV['HOME']}/Documents/Tracker/"
 
 # define command line options
 opts = Trollop::options do
-  opt :report, "Reporting mode", :short => '-l'
+  opt :report, "Reporting mode", :short => "-l"
   opt :edit, "Edit mode"
-  opt :date, "The date", :type => String
+  opt :date, "The date", :type => String, :short => "-d"
+  opt :debug, "Debugging mode", :short => "-i"
 end
 
 # all valid options have been processed, so figure out which mode
@@ -107,6 +110,7 @@ if MODE == 'report'
       STDERR.puts "No time log for today. Track some time first.\n"
     end
   end
+
 elsif MODE == 'edit'
   if File.exist? filename
     if ENV['EDITOR']
@@ -119,128 +123,40 @@ elsif MODE == 'edit'
     STDERR.puts "#{__FILE__}: #{filename} does not exist or unable to open."
     exit 1
   end
+
+elsif MODE == 'insert'
+  if opts[:date]
+    puts "WARNING: Adding time to a day other than today is not recommended."
+    print "Continue? (y/n) "
+    input = STDIN.readline.chomp
+    unless input =~ /^y(es)?/i
+        STDERR.puts "Timelog update cancelled."
+        exit 1
+    end
+  end
+  
+  # process arguments
+  minutes = TrackerUtil::processTimeArgument ARGV.shift
+  message = ARGV.join(" ")
+  
+  # open the output file
+  first_time = !File.exist?(filename)
+  debugger if opts[:debug]
+  begin
+    File.open filename, 'a', :autoclose => true do |file|
+      if first_time
+        currentTimeInMinutes = TrackerUtil::timeToMinutes(TrackerUtil::currentTimeFormatted)
+        startTime = TrackerUtil::minutesToTime(TrackerUtil::nearest15Minutes(currentTimeInMinutes - minutes))
+        file.puts "#{fdate} #{startTime}"
+      end
+      file.puts "#{minutes}: #{message}"
+    end
+  rescue
+    STDERR.puts "Couldn't open #{filename}: #{$!}"
+    exit 1
+  end
+
+else
+    STDERR.puts "Couldn't determine the correct mode (I was given '#{MODE}'): #{$!}"
+    exit 1
 end
-__END__
-elsif ($MODE eq 'insert') {
-    if ($date_arg) {
-        print "WARNING: Adding time to a day other than today is not recommended.\n";
-        print "Continue? (y/n) ";
-        $input = <STDIN>;
-        if (!($input =~ /^y(es)?/i)) {
-            print STDERR "Timelog update cancelled.\n";
-            exit(1);
-        }
-    }
-    
-    # process arguments
-    my $minutes = processTimeArgument($ARGV[0]);
-    my $message = join(" ", @ARGV[1..@ARGV-1]);
-    
-    # open the output file
-    if (!-e $filename) {
-        open TIMELOG, ">> $filename" or die "Couldn't open $filename: $!";
-        my $currentTimeInMinutes = timeToMinutes(currentTimeFormatted());
-        my $startTime = minutesToTime(nearest15Minutes($currentTimeInMinutes - $minutes));
-        print TIMELOG "$fdate $startTime\n";
-    }
-    else {
-        open TIMELOG, ">> $filename" or die "Couldn't open $filename: $!";
-    }
-    
-    # print the logged time
-    print TIMELOG "$minutes: $message\n";
-}
-else {
-    die("Couldn't determine the correct mode (I was given '$MODE'):$!");
-}
-
-
-
-
-
-
-
-# expects a single argument - the time argument in the format ##m or ##h
-# if argument has no m/h qualifier, assume m
-# returns a number of minutes
-sub processTimeArgument
-{
-    if (@_ == 1) {
-        my $minutes;
-        if ($_[0] =~ /^(\d*\.?\d+)((m|min|minute|minutes)|(h|hr|hour|hours))?$/i) {
-            my $time = $1, $modifier = $2;
-            if ($modifier =~ /h.*/) {
-                $minutes = $time * 60;
-            }
-            else {
-                $minutes = $time;
-            }
-            
-            # check enough time has been logged
-            if ($minutes < 15) {
-                print STDERR "You must log at least 15 minutes.\n";
-                exit(1);
-            }
-            
-            return nearest15Minutes(nearestInt($minutes));
-        }
-        else {
-            print STDERR "Incorrectly formatted argument.\n";
-            exit(1);
-        }
-    }
-}
-
-# expects a time string formatted HH24:MM
-sub timeToMinutes
-{
-    my $len = @_;
-    if ($len == 1) {
-        my @theTime = split(":", $_[0]);
-        my $minutes = $theTime[0] * 60 + $theTime[1];
-        return $minutes;
-    }
-}
-
-# expects an integer
-sub minutesToTime
-{
-    my $len = @_;
-    if ($len == 1) {
-        my $totalMinutes = $_[0];
-        my $minutes = sprintf("%02d", $totalMinutes % 60);
-        my $hours = int($totalMinutes / 60);
-        return "$hours:$minutes";
-    }
-}
-
-# expects an integer which is the amount of minutes logged
-sub startTimeInMinutes
-{
-    my $currentTimeInMinutes = timeToMinutes(currentTimeFormatted());
-    my $rounded = nearest15Minutes($currentTimeInMinutes);
-    return $rounded - $_[0];
-}
-
-sub nearestInt
-{
-    my $integerPart = int($_[0]);
-    my $decimalPart = $_[0] - $integerPart;
-    return $decimalPart >= 0.5 ? $integerPart + 1 : $integerPart;
-}
-
-# expects an integer
-sub nearest15Minutes
-{
-    my $len = @_;
-    if ($len == 1) {
-        my $remainder = $_[0] % 15;
-        my $basetime = $_[0] - $remainder;
-        if ($remainder > 7) {
-            return $basetime + 15;
-        }
-        else {
-            return $basetime;
-        }
-    }
-}
