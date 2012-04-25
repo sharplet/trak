@@ -104,7 +104,7 @@ if MODE == 'report'
     personalTotal = TrackerUtil::printSubReport(personal, "Personal")
     
     newTimeString = TrackerUtil::to12HourTime(TrackerUtil::newTimeWithMinutes(startTime, workTotal + personalTotal))
-    puts "Hours logged until #{newTimeString}. (since #{TrackerUtil::to12HourTime(startTime)}). "
+    puts "Hours logged until #{newTimeString} (since #{TrackerUtil::to12HourTime(startTime)}). "
     
     # if we're reporting for today, print the current time
     puts "Currently #{TrackerUtil::to12HourTime(TrackerUtil::currentTimeFormatted())}." unless opts[:date]
