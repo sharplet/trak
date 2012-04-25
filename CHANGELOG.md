@@ -1,5 +1,12 @@
 # Change log
 
+## v0.0.2 (2012-04-26)
+
+Changed:
+
+* (8854df7) Refactored currentTimeInMintues to Time#to_minutes
+* (d485e0f) Removed currentTimeFormatted and timeToMinutes
+
 ## v0.0.1 (2012-04-26)
 
 Fixed (94929f0):
