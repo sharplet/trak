@@ -1,4 +1,5 @@
 require './blank'
+require './round_to_nearest'
 
 module TrackerUtil
   TIME_FORMAT_12HOUR = "%l:%M %p"
@@ -73,10 +74,10 @@ module TrackerUtil
       # check enough time has been logged
       if minutes < 15
         STDERR.puts "You must log at least 15 minutes."
-        exit(1);
+        exit 1
       end
 
-      nearest15Minutes(nearestInt(minutes));
+      minutes.round_to_nearest 15
     else
       STDERR.puts "Incorrectly formatted argument."
       exit 1
@@ -121,34 +122,5 @@ module TrackerUtil
   #     my $currentTimeInMinutes = timeToMinutes(currentTimeFormatted());
   #     my $rounded = nearest15Minutes($currentTimeInMinutes);
   #     return $rounded - $_[0];
-  # }
-
-  def self.nearestInt(number)
-    0
-  end
-  # sub nearestInt
-  # {
-  #     my $integerPart = int($_[0]);
-  #     my $decimalPart = $_[0] - $integerPart;
-  #     return $decimalPart >= 0.5 ? $integerPart + 1 : $integerPart;
-  # }
-
-  # expects an integer
-  def self.nearest15Minutes(minutes)
-    0    
-  end
-  # sub nearest15Minutes
-  # {
-  #     my $len = @_;
-  #     if ($len == 1) {
-  #         my $remainder = $_[0] % 15;
-  #         my $basetime = $_[0] - $remainder;
-  #         if ($remainder > 7) {
-  #             return $basetime + 15;
-  #         }
-  #         else {
-  #             return $basetime;
-  #         }
-  #     }
   # }
 end

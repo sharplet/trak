@@ -152,7 +152,7 @@ elsif MODE == 'insert'
     File.open filename, 'a', :autoclose => true do |file|
       if first_time
         currentTimeInMinutes = TrackerUtil::timeToMinutes(TrackerUtil::currentTimeFormatted)
-        startTime = TrackerUtil::minutesToTime(TrackerUtil::nearest15Minutes(currentTimeInMinutes - minutes))
+        startTime = TrackerUtil::minutesToTime((currentTimeInMinutes - minutes).round_to_nearest 15)
         file.puts "#{fdate} #{startTime}"
       end
       file.puts "#{minutes}: #{message}"
