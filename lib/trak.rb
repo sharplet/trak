@@ -12,6 +12,7 @@ require 'trollop'
 require 'debugger'
 
 require "trak/tracker_util"
+require 'trak/time'
 
 # place where data is stored
 datadir = "#{ENV['HOME']}/Documents/Tracker/"
@@ -152,7 +153,7 @@ elsif MODE == 'insert'
     File.open filename, 'a', :autoclose => true do |file|
       if first_time
         debug
-        currentTimeInMinutes = TrackerUtil::timeToMinutes(TrackerUtil::currentTimeFormatted)
+        currentTimeInMinutes = Time.now.to_minutes
         startTime = TrackerUtil::minutesToTime((currentTimeInMinutes - minutes).round_to_nearest 15)
         file.puts "#{fdate} #{startTime}"
       end
