@@ -1,5 +1,5 @@
-require './blank'
-require './round_to_nearest'
+require "#{File.dirname(__FILE__)}/blank"
+require "#{File.dirname(__FILE__)}/round_to_nearest"
 
 module TrackerUtil
   TIME_FORMAT_12HOUR = "%l:%M %p"
