@@ -108,7 +108,7 @@ if MODE == 'report'
     puts "Hours logged until #{newTimeString} (since #{TrackerUtil::to12HourTime(startTime)}). "
     
     # if we're reporting for today, print the current time
-    puts "Currently #{TrackerUtil::to12HourTime(TrackerUtil::currentTimeFormatted())}." unless opts[:date]
+    puts "Currently #{TrackerUtil::to12HourTime(Time.now.strftime(TrackerUtil::TIME_FORMAT_24HOUR))}." unless opts[:date]
   else
     if opts[:date]
       STDERR.puts "No time log for #{fdate}. Track some time first."

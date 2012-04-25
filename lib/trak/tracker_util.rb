@@ -58,10 +58,6 @@ module TrackerUtil
     end
   end
   
-  def self.currentTimeFormatted
-    Time.now.strftime(TIME_FORMAT_24HOUR)
-  end
-
   # expects a single argument - the time argument in the format ##m or ##h
   # if argument has no m/h qualifier, assume m
   # returns a number of minutes
@@ -84,12 +80,6 @@ module TrackerUtil
     end
   end
 
-  # expects a time string formatted HH24:MM
-  def self.timeToMinutes(time)
-    hours, minutes = time.split(':')
-    hours.to_i*60 + minutes.to_i
-  end
-
   # expects an integer
   def self.minutesToTime(minutes)
     time_with_hours_minutes(minutes / 60, minutes % 60).strftime(TIME_FORMAT_24HOUR).strip
@@ -97,7 +87,6 @@ module TrackerUtil
 
   # expects an integer which is the amount of minutes logged
   def self.startTimeInMinutes(minutes)
-    currentTimeInMinutes = timeToMinutes(currentTimeFormatted).round_to_nearest 15
-    currentTimeInMinutes - minutes
+    Time.now.to_minutes.round_to_nearest(15) - minutes
   end
 end
