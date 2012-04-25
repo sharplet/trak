@@ -61,7 +61,7 @@ if MODE == 'report'
     begin
       file = File.open(filename).readlines.map &:chomp
     rescue
-      STDERR.puts $!
+      STDERR.puts "#{__FILE__}: #{$!}"
       exit 1
     end
     
@@ -107,22 +107,20 @@ if MODE == 'report'
       STDERR.puts "No time log for today. Track some time first.\n"
     end
   end
+elsif MODE == 'edit'
+  if File.exist? filename
+    if ENV['EDITOR']
+      exec "#{ENV['EDITOR']} #{filename}"
+    else
+      exec "open", filename
+    end
+    exit
+  else
+    STDERR.puts "#{__FILE__}: #{filename} does not exist or unable to open."
+    exit 1
+  end
 end
 __END__
-elsif ($MODE eq 'edit') {
-    if (-e $filename) {
-        if (exists $ENV{'EDITOR'}) {
-            exec("$ENV{'EDITOR'} $filename");
-        }
-        else {
-            `open $filename`;
-        }
-        exit(0);
-    }
-    else {
-        die "Couldn't open $filename: $!";
-    }
-}
 elsif ($MODE eq 'insert') {
     if ($date_arg) {
         print "WARNING: Adding time to a day other than today is not recommended.\n";
