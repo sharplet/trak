@@ -65,35 +65,23 @@ module TrackerUtil
   # if argument has no m/h qualifier, assume m
   # returns a number of minutes
   def self.processTimeArgument(time_string)
-    0
+    if time_string =~ /^(\d*\.?\d+)((m|min|minute|minutes)|(h|hr|hour|hours))?$/i
+      time = $1.to_i
+      modifier = $2
+      minutes = (modifier =~ /h.*/) ? time * 60 : time
+
+      # check enough time has been logged
+      if minutes < 15
+        STDERR.puts "You must log at least 15 minutes."
+        exit(1);
+      end
+
+      nearest15Minutes(nearestInt(minutes));
+    else
+      STDERR.puts "Incorrectly formatted argument."
+      exit 1
+    end
   end
-  # sub processTimeArgument
-  # {
-  #     if (@_ == 1) {
-  #         my $minutes;
-  #         if ($_[0] =~ /^(\d*\.?\d+)((m|min|minute|minutes)|(h|hr|hour|hours))?$/i) {
-  #             my $time = $1, $modifier = $2;
-  #             if ($modifier =~ /h.*/) {
-  #                 $minutes = $time * 60;
-  #             }
-  #             else {
-  #                 $minutes = $time;
-  #             }
-  # 
-  #             # check enough time has been logged
-  #             if ($minutes < 15) {
-  #                 print STDERR "You must log at least 15 minutes.\n";
-  #                 exit(1);
-  #             }
-  # 
-  #             return nearest15Minutes(nearestInt($minutes));
-  #         }
-  #         else {
-  #             print STDERR "Incorrectly formatted argument.\n";
-  #             exit(1);
-  #         }
-  #     }
-  # }
 
   # expects a time string formatted HH24:MM
   def self.timeToMinutes(time)

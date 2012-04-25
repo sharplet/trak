@@ -141,12 +141,13 @@ elsif MODE == 'insert'
   end
   
   # process arguments
+  debug
   minutes = TrackerUtil::processTimeArgument ARGV.shift
   message = ARGV.join(" ")
   
   # open the output file
   first_time = !File.exist?(filename)
-  debug
+  # debug
   begin
     File.open filename, 'a', :autoclose => true do |file|
       if first_time
