@@ -87,12 +87,12 @@ module TrackerUtil
   # expects a time string formatted HH24:MM
   def self.timeToMinutes(time)
     hours, minutes = time.split(':')
-    hours*60 + minutes
+    hours.to_i*60 + minutes.to_i
   end
 
   # expects an integer
   def self.minutesToTime(minutes)
-    time_with_hours_minutes(minutes / 60, minutes % 60).sprintf TIME_FORMAT_24HOUR
+    time_with_hours_minutes(minutes / 60, minutes % 60).strftime(TIME_FORMAT_24HOUR).strip
   end
 
   # expects an integer which is the amount of minutes logged

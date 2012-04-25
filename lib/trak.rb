@@ -151,6 +151,7 @@ elsif MODE == 'insert'
   begin
     File.open filename, 'a', :autoclose => true do |file|
       if first_time
+        debug
         currentTimeInMinutes = TrackerUtil::timeToMinutes(TrackerUtil::currentTimeFormatted)
         startTime = TrackerUtil::minutesToTime((currentTimeInMinutes - minutes).round_to_nearest 15)
         file.puts "#{fdate} #{startTime}"
