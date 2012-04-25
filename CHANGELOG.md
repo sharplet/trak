@@ -1,5 +1,13 @@
 # Change log
 
+## v0.0.1 (2012-04-26)
+
+Fixed (94929f0):
+
+* Exception when tracking first time for day. Removed an erroneous call
+  to sprintf instead of strftime. Also ensured use of integers when
+  calculating current time in minutes.
+
 ## v0.0.0 (2012-04-25)
 
 Tracker is now known as trak, and it's a RubyGem!
