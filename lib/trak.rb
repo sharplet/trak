@@ -8,13 +8,10 @@
 #   - First arg is how much time spent
 #   - Second arg is a description
 
-SCRIPT_PATH = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
-SCRIPT_DIR = File.dirname(SCRIPT_PATH)
-
 require 'trollop'
 require 'debugger'
 
-require "#{SCRIPT_DIR}/tracker_util"
+require "trak/tracker_util"
 
 # place where data is stored
 datadir = "#{ENV['HOME']}/Documents/Tracker/"
