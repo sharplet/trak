@@ -1,5 +1,18 @@
 # Change log
 
+## v0.0.0 (2012-04-25)
+
+Tracker is now known as trak, and it's a RubyGem!
+
+Changed:
+
+* Trak has now been ported from Perl to Ruby. The main reason for this
+  was for the ability to support the awesome gem Chronic for natural
+  language date parsing in an upcoming release. But beyond that,
+  RubyGems is fantastic for packaging and distribution and the plan is
+  to make this code seriously more modular over the next little while
+  (the code is a joke at the moment :O).
+
 ## v0.4 (2011-10-17)
 
 Added:
