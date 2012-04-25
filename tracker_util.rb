@@ -86,41 +86,18 @@ module TrackerUtil
 
   # expects a time string formatted HH24:MM
   def self.timeToMinutes(time)
-    0
+    hours, minutes = time.split(':')
+    hours*60 + minutes
   end
-  # sub timeToMinutes
-  # {
-  #     my $len = @_;
-  #     if ($len == 1) {
-  #         my @theTime = split(":", $_[0]);
-  #         my $minutes = $theTime[0] * 60 + $theTime[1];
-  #         return $minutes;
-  #     }
-  # }
 
   # expects an integer
   def self.minutesToTime(minutes)
-    "12:00"
+    time_with_hours_minutes(minutes / 60, minutes % 60).sprintf TIME_FORMAT_24HOUR
   end
-  # sub minutesToTime
-  # {
-  #     my $len = @_;
-  #     if ($len == 1) {
-  #         my $totalMinutes = $_[0];
-  #         my $minutes = sprintf("%02d", $totalMinutes % 60);
-  #         my $hours = int($totalMinutes / 60);
-  #         return "$hours:$minutes";
-  #     }
-  # }
 
   # expects an integer which is the amount of minutes logged
   def self.startTimeInMinutes(minutes)
-    "12:00"
+    currentTimeInMinutes = timeToMinutes(currentTimeFormatted).round_to_nearest 15
+    currentTimeInMinutes - minutes
   end
-  # sub startTimeInMinutes
-  # {
-  #     my $currentTimeInMinutes = timeToMinutes(currentTimeFormatted());
-  #     my $rounded = nearest15Minutes($currentTimeInMinutes);
-  #     return $rounded - $_[0];
-  # }
 end
