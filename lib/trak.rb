@@ -11,7 +11,7 @@
 require 'trollop'
 require 'debugger'
 
-require "trak/util"
+require 'trak/trak'
 require 'trak/core_ext/time'
 
 # place where data is stored
@@ -101,14 +101,14 @@ if MODE == 'report'
         puts "# Today's logged work"
     end
     
-    workTotal = TrackerUtil::printSubReport(work, "Work")
-    personalTotal = TrackerUtil::printSubReport(personal, "Personal")
+    workTotal = Trak::printSubReport(work, "Work")
+    personalTotal = Trak::printSubReport(personal, "Personal")
     
-    newTimeString = TrackerUtil::to12HourTime(TrackerUtil::newTimeWithMinutes(startTime, workTotal + personalTotal))
-    puts "Hours logged until #{newTimeString} (since #{TrackerUtil::to12HourTime(startTime)}). "
+    newTimeString = Trak::to12HourTime(Trak::newTimeWithMinutes(startTime, workTotal + personalTotal))
+    puts "Hours logged until #{newTimeString} (since #{Trak::to12HourTime(startTime)}). "
     
     # if we're reporting for today, print the current time
-    puts "Currently #{TrackerUtil::to12HourTime(Time.now.strftime(TrackerUtil::TIME_FORMAT_24HOUR))}." unless opts[:date]
+    puts "Currently #{Trak::to12HourTime(Time.now.strftime(Trak::TIME_FORMAT_24HOUR))}." unless opts[:date]
   else
     if opts[:date]
       STDERR.puts "No time log for #{fdate}. Track some time first."
@@ -143,7 +143,7 @@ elsif MODE == 'insert'
   
   # process arguments
   debug
-  minutes = TrackerUtil::processTimeArgument ARGV.shift
+  minutes = Trak::processTimeArgument ARGV.shift
   message = ARGV.join(" ")
   
   # open the output file
@@ -154,7 +154,7 @@ elsif MODE == 'insert'
       if first_time
         debug
         currentTimeInMinutes = Time.now.to_minutes
-        startTime = TrackerUtil::minutesToTime((currentTimeInMinutes - minutes).round_to_nearest 15)
+        startTime = Trak::minutesToTime((currentTimeInMinutes - minutes).round_to_nearest 15)
         file.puts "#{fdate} #{startTime}"
       end
       file.puts "#{minutes}: #{message}"

@@ -1,7 +1,7 @@
 require "trak/core_ext/blank"
 require "trak/core_ext/integer"
 
-module TrackerUtil
+module Trak
   TIME_FORMAT_12HOUR = "%l:%M %p"
   TIME_FORMAT_24HOUR = "%k:%M"
   
