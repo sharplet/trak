@@ -1,5 +1,5 @@
-require "trak/blank"
-require "trak/round_to_nearest"
+require "trak/core_ext/blank"
+require "trak/core_ext/integer"
 
 module TrackerUtil
   TIME_FORMAT_12HOUR = "%l:%M %p"

@@ -11,8 +11,8 @@
 require 'trollop'
 require 'debugger'
 
-require "trak/tracker_util"
-require 'trak/time'
+require "trak/util"
+require 'trak/core_ext/time'
 
 # place where data is stored
 datadir = "#{ENV['HOME']}/Documents/Tracker/"
