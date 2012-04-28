@@ -12,6 +12,7 @@ require 'trollop'
 require 'debugger'
 
 require 'trak/trak'
+require 'trak/exit'
 require 'trak/core_ext/time'
 
 # place where data is stored
@@ -70,8 +71,7 @@ if MODE == 'report'
     begin
       file = File.open(filename).readlines.map &:chomp
     rescue
-      STDERR.puts "#{__FILE__}: #{$!}"
-      exit 1
+      Exit::exit_err "#{__FILE__}: #{$!}"
     end
     
     # The keys for each hash are the titles of the various tasks logged.
@@ -126,8 +126,7 @@ elsif MODE == 'edit'
     end
     exit
   else
-    STDERR.puts "#{__FILE__}: #{filename} does not exist or unable to open."
-    exit 1
+    Exit::exit_err "#{__FILE__}: #{filename} does not exist or unable to open."
   end
 
 elsif MODE == 'insert'
@@ -136,8 +135,7 @@ elsif MODE == 'insert'
     print "Continue? (y/n) "
     input = STDIN.readline.chomp
     unless input =~ /^y(es)?/i
-        STDERR.puts "Timelog update cancelled."
-        exit 1
+        Exit::exit_err "Timelog update cancelled."
     end
   end
   
@@ -160,11 +158,9 @@ elsif MODE == 'insert'
       file.puts "#{minutes}: #{message}"
     end
   rescue
-    STDERR.puts "Couldn't open #{filename}: #{$!}"
-    exit 1
+    Exit::exit_err "Couldn't open #{filename}: #{$!}"
   end
 
 else
-    STDERR.puts "Couldn't determine the correct mode (I was given '#{MODE}'): #{$!}"
-    exit 1
+    Exit::exit_err "Couldn't determine the correct mode (I was given '#{MODE}'): #{$!}"
 end
