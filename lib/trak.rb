@@ -29,7 +29,7 @@ end
 
 $g_opts = opts
 def debug(steps = 1)
-  debugger if $g_opts[:debug]
+  debugger(steps) if $g_opts[:debug]
 end
 
 # all valid options have been processed, so figure out which mode
