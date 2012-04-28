@@ -66,55 +66,8 @@ end
 filename = "#{datadir}#{fdate}-time-log.txt"
 
 if MODE == 'report'
-  if File.exist? filename
-    # open the file and get it as an array
-    begin
-      file = File.open(filename).readlines.map &:chomp
-    rescue
-      Exit::exit_err "#{__FILE__}: #{$!}"
-    end
-    
-    # The keys for each hash are the titles of the various tasks logged.
-    # The values are the total time spent on the task.
-    work = {}
-    personal = {}
-    
-    # find the start time for the day we're reporting on
-    startTime = file.first.split[1]
-    
-    # process each line of the file
-    file[1..file.size].each do |line|
-      minutes, text = line.split(': ')
-      unless text =~ /personal|uni|lunch|home/
-        work[text] = 0 unless work.include? text
-        work[text] += minutes.to_i
-      else
-        personal[text] = 0 unless personal.include? text
-        personal[text] += minutes.to_i
-      end
-    end
-    
-    # print the report
-    if opts[:date]
-        puts "# Logged work for #{fdate}"
-    else
-        puts "# Today's logged work"
-    end
-    
-    workTotal = Trak::printSubReport(work, "Work")
-    personalTotal = Trak::printSubReport(personal, "Personal")
-    
-    newTimeString = Trak::to12HourTime(Trak::newTimeWithMinutes(startTime, workTotal + personalTotal))
-    puts "Hours logged until #{newTimeString} (since #{Trak::to12HourTime(startTime)}). "
-    
-    # if we're reporting for today, print the current time
-    puts "Currently #{Trak::to12HourTime(Time.now.strftime(Trak::TIME_FORMAT_24HOUR))}." unless opts[:date]
-  else
-    if opts[:date]
-      STDERR.puts "No time log for #{fdate}. Track some time first."
-    else
-      STDERR.puts "No time log for today. Track some time first.\n"
-    end
+  Trak::log_for fdate do |l|
+    l.report
   end
 
 elsif MODE == 'edit'

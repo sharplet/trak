@@ -17,6 +17,7 @@ you a breakdown."
 
   # If you have other dependencies, add them here
   s.add_dependency "trollop", "~> 1.16"
+  s.add_dependency "chronic", "~> 0.6"
 
   # If you need to check in files that aren't .rb files, add them here
   s.files        = Dir["{lib}/**/*.rb", "bin/*", "*.md"]

@@ -1,9 +1,26 @@
 require "trak/core_ext/blank"
 require "trak/core_ext/integer"
+require "trak/time_log"
+require 'trak/exit'
 
 module Trak
-  TIME_FORMAT_12HOUR = "%l:%M %p"
-  TIME_FORMAT_24HOUR = "%k:%M"
+  TIME_FORMAT_12HOUR = "%-l:%M %p"
+  TIME_FORMAT_24HOUR = "%-k:%M"
+  
+  # defines the primary interface for creating and modifying time logs
+  def self.log_for(date)
+    if date.kind_of? Symbol
+      log = TimeLog::for_sym date
+    elsif date.kind_of? Time
+      log = TimeLog::for_date date
+    elsif date.kind_of? String
+      log = TimeLog::for_date_string date
+    else
+      raise "Symbol, Time or String expected"
+    end
+    yield log
+    log
+  end
   
   # expects a hash of tasks mapped to time spent, and a sub-report name
   #   (e.g., work, personal)
