@@ -7,3 +7,13 @@ class Integer
     end
   end
 end
+
+class Float
+  def round_to_nearest(integer = 1)
+    if integer == 1
+      self.round
+    else
+      ((self / integer).round * integer).to_i
+    end
+  end
+end

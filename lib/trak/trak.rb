@@ -1,5 +1,5 @@
 require "trak/core_ext/blank"
-require "trak/core_ext/integer"
+require "trak/core_ext/round_to_nearest"
 require "trak/time_log"
 require 'trak/exit'
 
@@ -80,7 +80,7 @@ module Trak
   # returns a number of minutes
   def self.processTimeArgument(time_string)
     if time_string =~ /^(\d*\.?\d+)((m|min|minute|minutes)|(h|hr|hour|hours))?$/i
-      time = $1.to_i
+      time = $1.to_f
       modifier = $2
       minutes = (modifier =~ /h.*/) ? time * 60 : time
 
