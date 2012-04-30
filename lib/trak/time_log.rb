@@ -36,7 +36,7 @@ class TimeLog
   end
 
   def report
-    begin
+    if File.exist? @filename
       file = File.open @filename do |f|
         f.readlines.map &:chomp
       end
@@ -76,7 +76,7 @@ class TimeLog
 
       # if we're reporting for today, print the current time
       puts (today?) ? "Currently #{Time.now.strftime Trak::TIME_FORMAT_12HOUR}." : nil
-    rescue RuntimeError
+    else
       unless today?
         STDERR.puts "No time log for #{@fdate}. Track some time first."
       else
