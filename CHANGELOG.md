@@ -1,5 +1,18 @@
 # Change log
 
+## v0.0.3 (2012-04-30)
+
+Changed:
+
+* (3483255): Added exit_err helper method
+* (0c0cbf7): Renamed TrackerUtil module to Trak
+* (9528123): Restructured lib dir
+
+Fixed:
+
+* (1050905): Fix bug where all time args are truncated to int
+* (328b276): Fixed debug wrapper method
+
 ## v0.0.2 (2012-04-26)
 
 Changed:

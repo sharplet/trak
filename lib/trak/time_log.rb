@@ -72,12 +72,10 @@ class TimeLog
       personal_total = sub_report(personal, "Personal")
 
       logged_until = start_time + (work_total + personal_total) * 60
-      puts "Hours logged until #{logged_until.strftime Trak::TIME_FORMAT_12HOUR} (since #{start_time.strftime Trak::TIME_FORMAT_12HOUR}). "
+      print "Hours logged until #{logged_until.strftime Trak::TIME_FORMAT_12HOUR} (since #{start_time.strftime Trak::TIME_FORMAT_12HOUR}). "
 
       # if we're reporting for today, print the current time
-      if today?
-        puts "Currently #{Time.now.strftime Trak::TIME_FORMAT_12HOUR}."
-      end
+      puts (today?) ? "Currently #{Time.now.strftime Trak::TIME_FORMAT_12HOUR}." : nil
     rescue RuntimeError
       unless today?
         STDERR.puts "No time log for #{@fdate}. Track some time first."
