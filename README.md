@@ -1,6 +1,6 @@
 # Trak: track chunks of time from the command line
 
-Trak, v0.0.2 (Apr 26, 2012)  
+Trak, v0.0.3 (Apr 30, 2012)  
 Written by Adam Sharp
 
 ## Notice

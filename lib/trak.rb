@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
 # command:
-#   $ Tracker.pl 30 "I did stuff"
-#   $ Tracker.pl 1h "I did twice as much stuff"
+#   $ trak 30 work on trak
+#   $ trak 1h work really hard on trak
 #
 # format:
 #   - First arg is how much time spent
