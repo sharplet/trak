@@ -105,10 +105,10 @@ if MODE == 'report'
     personalTotal = Trak::printSubReport(personal, "Personal")
     
     newTimeString = Trak::to12HourTime(Trak::newTimeWithMinutes(startTime, workTotal + personalTotal))
-    puts "Hours logged until #{newTimeString} (since #{Trak::to12HourTime(startTime)}). "
+    print "Hours logged until #{newTimeString} (since #{Trak::to12HourTime(startTime)}). "
     
     # if we're reporting for today, print the current time
-    puts "Currently #{Trak::to12HourTime(Time.now.strftime(Trak::TIME_FORMAT_24HOUR))}." unless opts[:date]
+    puts (!opts[:date]) ? "Currently #{Trak::to12HourTime(Time.now.strftime(Trak::TIME_FORMAT_24HOUR))}." : nil
   else
     if opts[:date]
       STDERR.puts "No time log for #{fdate}. Track some time first."
