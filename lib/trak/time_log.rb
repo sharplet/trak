@@ -22,7 +22,7 @@ class TimeLog
     end
     
     def for_date_string(date)
-      new(Chronic::parse date)
+      new(Chronic::parse date, :context => :past)
     end
   end
 
