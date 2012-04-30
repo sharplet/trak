@@ -91,12 +91,12 @@ elsif MODE == 'insert'
         Exit::exit_err "Timelog update cancelled."
     end
   end
-  
+
   # process arguments
   debug
   minutes = Trak::processTimeArgument ARGV.shift
   message = ARGV.join(" ")
-  
+
   # open the output file
   first_time = !File.exist?(filename)
   # debug

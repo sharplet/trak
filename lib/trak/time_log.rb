@@ -8,7 +8,6 @@ class TimeLog
 
   # class initialisers
   class << self
-    # FIXME: symold shortcuts don't work
     def for_sym(date_ref)
       if date_ref.kind_of? Symbol and VALID_DATE_REF.include? date_ref
         new(Time.now)
@@ -20,7 +19,7 @@ class TimeLog
     def for_date(time)
       new(time)
     end
-    
+
     def for_date_string(date)
       new(Chronic::parse date, :context => :past)
     end
@@ -29,7 +28,7 @@ class TimeLog
   def initialize(date = Time.now, options = { :data_dir => DEFAULT_DIR })
     @date = date
     @options = options
-    
+
     # set this time log's file name
     @fdate = date.strftime DATE_FORMAT
     @filename = "#{options[:data_dir].gsub(/\/$/, '')}/#{@fdate}-time-log.txt"
@@ -40,7 +39,7 @@ class TimeLog
       file = File.open @filename do |f|
         f.readlines.map &:chomp
       end
-      
+
       # The keys for each hash are the titles of the various tasks logged.
       # The values are the total time spent on the task.
       work = {}
