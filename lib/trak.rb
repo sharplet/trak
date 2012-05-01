@@ -9,7 +9,6 @@
 #   - Second arg is a description
 
 require 'trollop'
-require 'debugger'
 
 require 'trak/trak'
 require 'trak/exit'
@@ -54,18 +53,13 @@ BANNER
       :type => String, :short => "-d"
   opt :report, "Print a report for the specified date", :short => "-l"
   opt :edit, "Open the log for the specified date in EDITOR"
-  opt :debug, "Debugging mode", :short => "-i"
-end
-
-$g_opts = opts
-def debug(steps = 1)
-  debugger(steps) if $g_opts[:debug]
 end
 
 # all valid options have been processed, so figure out which mode
 # we're in...
 #
 # if we found a -r or -l option, ignore everything else
+Trak::breakpoint
 if opts[:report]
   MODE = 'report'
 # now check if the user wants edit mode
@@ -170,17 +164,17 @@ elsif MODE == 'insert'
   end
 
   # process arguments
-  debug
+  Trak::breakpoint
   minutes = Trak::processTimeArgument ARGV.shift
   message = ARGV.join(" ")
 
   # open the output file
   first_time = !File.exist?(filename)
-  # debug
+  Trak::breakpoint
   begin
     File.open filename, 'a', :autoclose => true do |file|
       if first_time
-        debug
+        Trak::breakpoint
         currentTimeInMinutes = Time.now.to_minutes
         startTime = Trak::minutesToTime((currentTimeInMinutes - minutes).round_to_nearest 15)
         file.puts "#{fdate} #{startTime}"
