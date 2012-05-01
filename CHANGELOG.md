@@ -1,5 +1,20 @@
 # Change log
 
+## v0.0.4 (2012-05-01)
+
+Changed:
+
+* (ca1da2d): Use TRAK_DEBUG environment var instead of --debug
+* (d00089a): Moved todos into github issue tracker
+* (5cb50db): Fix for report format
+
+Closed:
+
+* (a6669ca): #11 - Refactor command-line specific code into bin/trak +
+  refactor Trak module
+* (f5fd613): Add -h|--help switch. Fixes #6
+* (a113869): Added version info. Fixes #7
+
 ## v0.0.3 (2012-04-30)
 
 Changed:
