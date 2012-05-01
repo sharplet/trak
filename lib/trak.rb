@@ -21,6 +21,7 @@ datadir = "#{ENV['HOME']}/Documents/Tracker/"
 
 # define command line options
 opts = Trollop::options do
+  version "trak version 0.0.4"
   opt :report, "Reporting mode", :short => "-l"
   opt :edit, "Edit mode"
   opt :date, "The date", :type => String, :short => "-d"
