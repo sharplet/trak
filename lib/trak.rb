@@ -74,15 +74,15 @@ if MODE == 'report'
     rescue
       Exit::exit_err "#{__FILE__}: #{$!}"
     end
-    
+
     # The keys for each hash are the titles of the various tasks logged.
     # The values are the total time spent on the task.
     work = {}
     personal = {}
-    
+
     # find the start time for the day we're reporting on
     startTime = file.first.split[1]
-    
+
     # process each line of the file
     file[1..file.size].each do |line|
       minutes, text = line.split(': ')
@@ -94,20 +94,20 @@ if MODE == 'report'
         personal[text] += minutes.to_i
       end
     end
-    
+
     # print the report
     if opts[:date]
         puts "# Logged work for #{fdate}"
     else
         puts "# Today's logged work"
     end
-    
+
     workTotal = Trak::printSubReport(work, "Work")
     personalTotal = Trak::printSubReport(personal, "Personal")
-    
+
     newTimeString = Trak::to12HourTime(Trak::newTimeWithMinutes(startTime, workTotal + personalTotal))
     print "Hours logged until #{newTimeString} (since #{Trak::to12HourTime(startTime)}). "
-    
+
     # if we're reporting for today, print the current time
     puts (!opts[:date]) ? "Currently #{Trak::to12HourTime(Time.now.strftime(Trak::TIME_FORMAT_24HOUR))}." : nil
   else
@@ -139,12 +139,12 @@ elsif MODE == 'insert'
         Exit::exit_err "Timelog update cancelled."
     end
   end
-  
+
   # process arguments
   debug
   minutes = Trak::processTimeArgument ARGV.shift
   message = ARGV.join(" ")
-  
+
   # open the output file
   first_time = !File.exist?(filename)
   # debug
