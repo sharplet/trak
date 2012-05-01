@@ -22,9 +22,38 @@ datadir = "#{ENV['HOME']}/Documents/Tracker/"
 # define command line options
 opts = Trollop::options do
   version "trak version 0.0.4"
-  opt :report, "Reporting mode", :short => "-l"
-  opt :edit, "Edit mode"
-  opt :date, "The date", :type => String, :short => "-d"
+  banner <<-BANNER
+Trak: log chunks of time from the command line
+Usage:
+    trak [-d|--date] <time> <message> # tracking mode
+    trak [-d|--date] [-r|--report]    # reporting mode
+    trak [-d|--date] -e|--edit        # opens time log in EDITOR
+
+Tracking time:
+    The <time> argument is the amount of time spent on the task, in
+    minutes. Append "h" for hours, e.g., 1.5h. Examples:
+
+        $ trak 15 email       # minimum 15 minutes
+        $ trak 25 lunch       # rounded to nearest 15m, i.e. 30
+        $ trak 1.5h bug 2345  # everything after <time> is the message
+
+Reporting:
+    The -r|--report option is optional, just typing `trak` with no
+    arguments will cause Trak to print a report for today. Use -d|--date
+    to print the report for another day.
+
+Dates:
+    Trak currently accepts dates in the format YYYY-MM-DD. All modes
+    accept the date argument (defaults to today).
+
+See http://github.com/sharplet/trak for more information.
+
+Options:
+BANNER
+  opt :date, "Specify the date of the log to work with",
+      :type => String, :short => "-d"
+  opt :report, "Print a report for the specified date", :short => "-l"
+  opt :edit, "Open the log for the specified date in EDITOR"
   opt :debug, "Debugging mode", :short => "-i"
 end
 
