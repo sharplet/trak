@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
-
 require 'trollop'
-
 require 'trak'
 require 'trak/exit'
 require 'trak/core_ext/time'

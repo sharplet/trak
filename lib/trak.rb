@@ -1,9 +1,8 @@
-require "trak/core_ext/blank"
-require "trak/core_ext/round_to_nearest"
-require "trak/time_log"
-require 'trak/exit'
-
 module Trak
+  require 'trak/core_ext/blank'
+  require 'trak/core_ext/round_to_nearest'
+  require 'trak/time_log'
+  require 'trak/exit'
   require 'debugger'
 
   TIME_FORMAT_12HOUR = "%-l:%M %p"
