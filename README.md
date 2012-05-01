@@ -62,7 +62,7 @@ Where:
 You can use either
 
     $ trak 30 "Foo bar"
-    
+
 or
 
     $ trak 30 Foo bar
@@ -78,29 +78,3 @@ These are all valid commands:
     $ trak 30min Rewrite trak documentation  # => 30 minutes
     $ trak 4hours Refactor trak              # => 4 hours
     $ trak 15 Lunch                          # => 15 minutes
-
-## To do
-
-* Proper handling of incorrectly formatted dates
-* Write a report that gives a weekly breakdown given a date in that week
-* Add a `-h` usage/help switch
-* Make the personal time search more configurable by putting keywords to
-  search in an array
-* Have the different types of reports, and keywords for those reports,
-  completely stored in a configuration file. The last category in the
-  file is the default report. Because keywords for custom reports would
-  work on a whitelist system, everything that doesn't match goes into
-  the default. For example:
-
-        # Personal
-        lunch
-        uni
-        news
-        # Default
-        Work
-
-* Have the keywords in the configuration file actually be regexes. When
-  reading the config file, any empty lines or whitespace are ignored.
-* Give an estimate of completion time, with a configurable default for
-  the length of the work day. Also take into account the default length
-  of lunch break (configurable) if lunch hasn't yet been logged.
