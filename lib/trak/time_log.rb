@@ -1,6 +1,6 @@
 class TimeLog
   require 'chronic'
-  require 'trak/trak'
+  require 'trak'
 
   DATE_FORMAT = '%F'
   DEFAULT_DIR = "#{ENV['HOME']}/Documents/Tracker"

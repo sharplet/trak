@@ -1,143 +1,115 @@
-#!/usr/bin/env ruby
-
-# command:
-#   $ trak 30 work on trak
-#   $ trak 1h work really hard on trak
-#
-# format:
-#   - First arg is how much time spent
-#   - Second arg is a description
-
-require 'trollop'
-
-require 'trak/trak'
+require "trak/core_ext/blank"
+require "trak/core_ext/round_to_nearest"
+require "trak/time_log"
 require 'trak/exit'
-require 'trak/core_ext/time'
 
-# place where data is stored
-datadir = "#{ENV['HOME']}/Documents/Tracker/"
-%x[mkdir -p #{datadir}]
+module Trak
+  require 'debugger'
 
-# define command line options
-opts = Trollop::options do
-  version "trak version 0.0.4"
-  banner <<-BANNER
-Trak: log chunks of time from the command line
-Usage:
-    trak [-d|--date] <time> <message> # tracking mode
-    trak [-d|--date] [-r|--report]    # reporting mode
-    trak [-d|--date] -e|--edit        # opens time log in EDITOR
+  TIME_FORMAT_12HOUR = "%-l:%M %p"
+  TIME_FORMAT_24HOUR = "%-k:%M"
 
-Tracking time:
-    The <time> argument is the amount of time spent on the task, in
-    minutes. Append "h" for hours, e.g., 1.5h. Examples:
-
-        $ trak 15 email       # minimum 15 minutes
-        $ trak 25 lunch       # rounded to nearest 15m, i.e. 30
-        $ trak 1.5h bug 2345  # everything after <time> is the message
-
-Reporting:
-    The -r|--report option is optional, just typing `trak` with no
-    arguments will cause Trak to print a report for today. Use -d|--date
-    to print the report for another day.
-
-Dates:
-    Trak currently accepts dates in the format YYYY-MM-DD. All modes
-    accept the date argument (defaults to today).
-
-See http://github.com/sharplet/trak for more information.
-
-Options:
-BANNER
-  opt :date, "Specify the date of the log to work with",
-      :type => String, :short => "-d"
-  opt :report, "Print a report for the specified date", :short => "-l"
-  opt :edit, "Open the log for the specified date in EDITOR"
-end
-
-# all valid options have been processed, so figure out which mode
-# we're in...
-#
-# if we found a -r or -l option, ignore everything else
-Trak::breakpoint
-if opts[:report]
-  MODE = 'report'
-# now check if the user wants edit mode
-elsif opts[:edit]
-  MODE = 'edit'
-# if there are still unprocessed args (that didn't look like switches),
-# we're in insert mode
-elsif ARGV.length > 0
-  MODE = 'insert'
-# if all else fails, there were probably no args to begin with, so we're
-# in report mode
-else
-  MODE = 'report'
-end
-
-today = Time.now.strftime '%F'
-
-# did the user supply a date argument that isn't today?
-if opts[:date] && opts[:date] != today
-  fdate = opts[:date]
-# otherwise use today's date, formatted, and set date_arg to be false
-else
-  fdate = today
-  opts[:date] = nil
-end
-
-# set the output file name
-filename = "#{datadir}#{fdate}-time-log.txt"
-
-if MODE == 'report'
-  Trak::log_for fdate do |l|
-    l.report
+  def self.breakpoint(steps = 1)
+    debugger(steps) if ENV['TRAK_DEBUG'] == "1"
   end
 
-elsif MODE == 'edit'
-  if File.exist? filename
-    if ENV['EDITOR']
-      exec "#{ENV['EDITOR']} #{filename}"
+  # defines the primary interface for creating and modifying time logs
+  def self.log_for(date)
+    if date.kind_of? Symbol
+      log = TimeLog::for_sym date
+    elsif date.kind_of? Time
+      log = TimeLog::for_date date
+    elsif date.kind_of? String
+      log = TimeLog::for_date_string date
     else
-      exec "open", filename
+      raise "Symbol, Time or String expected"
     end
-    exit
-  else
-    Exit::exit_err "#{__FILE__}: #{filename} does not exist or unable to open."
+    yield log
+    log
   end
 
-elsif MODE == 'insert'
-  if opts[:date]
-    puts "WARNING: Adding time to a day other than today is not recommended."
-    print "Continue? (y/n) "
-    input = STDIN.readline.chomp
-    unless input =~ /^y(es)?/i
-        Exit::exit_err "Timelog update cancelled."
-    end
-  end
-
-  # process arguments
-  Trak::breakpoint
-  minutes = Trak::processTimeArgument ARGV.shift
-  message = ARGV.join(" ")
-
-  # open the output file
-  first_time = !File.exist?(filename)
-  Trak::breakpoint
-  begin
-    File.open filename, 'a', :autoclose => true do |file|
-      if first_time
-        Trak::breakpoint
-        currentTimeInMinutes = Time.now.to_minutes
-        startTime = Trak::minutesToTime((currentTimeInMinutes - minutes).round_to_nearest 15)
-        file.puts "#{fdate} #{startTime}"
+  # expects a hash of tasks mapped to time spent, and a sub-report name
+  #   (e.g., work, personal)
+  # prints a formatted sub-report
+  # returns the total hours worked
+  def self.printSubReport(report_hash, report_title)
+    total = 0
+    unless report_hash.empty?
+      count = 0
+      report_out = ""
+      report_hash.each do |title, minutes|
+        total += minutes.to_i
+        count += 1
+        report_out += "=> #{timeString(minutes)}: #{title}"
+        report_out += "\n" unless count == report_hash.size
       end
-      file.puts "#{minutes}: #{message}"
+      puts "# #{report_title} time (#{timeString(total)})"
+      puts report_out
     end
-  rescue
-    Exit::exit_err "Couldn't open #{filename}: #{$!}"
+    total
   end
 
-else
-    Exit::exit_err "Couldn't determine the correct mode (I was given '#{MODE}'): #{$!}"
+  def self.time_with_hours_minutes(*hm)
+    dmy = Time.now.to_a[3..5].reverse
+    Time.new(*dmy, *hm)
+  end
+
+  # expects a number of minutes
+  # if less than 60 returns the number with an "m"
+  # otherwise converts to hours and adds an "h"
+  def self.timeString(minutes)
+    if minutes >= 60
+      hours = minutes/60.0
+      if hours % 1 == 0
+        hours = hours.to_i
+      end
+      "#{hours}h"
+    else
+      "#{minutes}m"
+    end
+  end
+
+  def self.newTimeWithMinutes(start_time, minutes)
+    hm = start_time.split ':'
+    Time.at(time_with_hours_minutes(*hm).to_i + minutes.to_i*60).strftime(TIME_FORMAT_24HOUR).strip
+  end
+
+  def self.to12HourTime(time)
+    unless time.blank?
+      hm = time.split ':'
+      time_with_hours_minutes(*hm).strftime(TIME_FORMAT_12HOUR).strip
+    end
+  end
+
+  # expects a single argument - the time argument in the format ##m or ##h
+  # if argument has no m/h qualifier, assume m
+  # returns a number of minutes
+  def self.processTimeArgument(time_string)
+    if time_string =~ /^(\d*\.?\d+)((m|min|minute|minutes)|(h|hr|hour|hours))?$/i
+      time = $1.to_f
+      modifier = $2
+      minutes = (modifier =~ /h.*/) ? time * 60 : time
+
+      # check enough time has been logged
+      if minutes < 15
+        STDERR.puts "You must log at least 15 minutes."
+        exit 1
+      end
+
+      minutes.round_to_nearest 15
+    else
+      STDERR.puts "Incorrectly formatted argument."
+      exit 1
+    end
+  end
+
+  # expects an integer
+  def self.minutesToTime(minutes)
+    time_with_hours_minutes(minutes / 60, minutes % 60).strftime(TIME_FORMAT_24HOUR).strip
+  end
+
+  # expects an integer which is the amount of minutes logged
+  def self.startTimeInMinutes(minutes)
+    Time.now.to_minutes.round_to_nearest(15) - minutes
+  end
 end
