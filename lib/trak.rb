@@ -9,7 +9,6 @@
 #   - Second arg is a description
 
 require 'trollop'
-require 'debugger'
 
 require 'trak/trak'
 require 'trak/exit'
@@ -21,21 +20,46 @@ datadir = "#{ENV['HOME']}/Documents/Tracker/"
 
 # define command line options
 opts = Trollop::options do
-  opt :report, "Reporting mode", :short => "-l"
-  opt :edit, "Edit mode"
-  opt :date, "The date", :type => String, :short => "-d"
-  opt :debug, "Debugging mode", :short => "-i"
-end
+  version "trak version 0.0.4"
+  banner <<-BANNER
+Trak: log chunks of time from the command line
+Usage:
+    trak [-d|--date] <time> <message> # tracking mode
+    trak [-d|--date] [-r|--report]    # reporting mode
+    trak [-d|--date] -e|--edit        # opens time log in EDITOR
 
-$g_opts = opts
-def debug(steps = 1)
-  debugger(steps) if $g_opts[:debug]
+Tracking time:
+    The <time> argument is the amount of time spent on the task, in
+    minutes. Append "h" for hours, e.g., 1.5h. Examples:
+
+        $ trak 15 email       # minimum 15 minutes
+        $ trak 25 lunch       # rounded to nearest 15m, i.e. 30
+        $ trak 1.5h bug 2345  # everything after <time> is the message
+
+Reporting:
+    The -r|--report option is optional, just typing `trak` with no
+    arguments will cause Trak to print a report for today. Use -d|--date
+    to print the report for another day.
+
+Dates:
+    Trak currently accepts dates in the format YYYY-MM-DD. All modes
+    accept the date argument (defaults to today).
+
+See http://github.com/sharplet/trak for more information.
+
+Options:
+BANNER
+  opt :date, "Specify the date of the log to work with",
+      :type => String, :short => "-d"
+  opt :report, "Print a report for the specified date", :short => "-l"
+  opt :edit, "Open the log for the specified date in EDITOR"
 end
 
 # all valid options have been processed, so figure out which mode
 # we're in...
 #
 # if we found a -r or -l option, ignore everything else
+Trak::breakpoint
 if opts[:report]
   MODE = 'report'
 # now check if the user wants edit mode
@@ -93,17 +117,17 @@ elsif MODE == 'insert'
   end
 
   # process arguments
-  debug
+  Trak::breakpoint
   minutes = Trak::processTimeArgument ARGV.shift
   message = ARGV.join(" ")
 
   # open the output file
   first_time = !File.exist?(filename)
-  # debug
+  Trak::breakpoint
   begin
     File.open filename, 'a', :autoclose => true do |file|
       if first_time
-        debug
+        Trak::breakpoint
         currentTimeInMinutes = Time.now.to_minutes
         startTime = Trak::minutesToTime((currentTimeInMinutes - minutes).round_to_nearest 15)
         file.puts "#{fdate} #{startTime}"

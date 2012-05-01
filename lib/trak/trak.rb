@@ -4,9 +4,15 @@ require "trak/time_log"
 require 'trak/exit'
 
 module Trak
+  require 'debugger'
+
   TIME_FORMAT_12HOUR = "%-l:%M %p"
   TIME_FORMAT_24HOUR = "%-k:%M"
-  
+
+  def self.breakpoint(steps = 1)
+    debugger(steps) if ENV['TRAK_DEBUG'] == "1"
+  end
+
   # defines the primary interface for creating and modifying time logs
   def self.log_for(date)
     if date.kind_of? Symbol
@@ -21,7 +27,7 @@ module Trak
     yield log
     log
   end
-  
+
   # expects a hash of tasks mapped to time spent, and a sub-report name
   #   (e.g., work, personal)
   # prints a formatted sub-report
@@ -42,12 +48,12 @@ module Trak
     end
     total
   end
-  
+
   def self.time_with_hours_minutes(*hm)
     dmy = Time.now.to_a[3..5].reverse
     Time.new(*dmy, *hm)
   end
-  
+
   # expects a number of minutes
   # if less than 60 returns the number with an "m"
   # otherwise converts to hours and adds an "h"
@@ -62,19 +68,19 @@ module Trak
       "#{minutes}m"
     end
   end
-  
+
   def self.newTimeWithMinutes(start_time, minutes)
     hm = start_time.split ':'
     Time.at(time_with_hours_minutes(*hm).to_i + minutes.to_i*60).strftime(TIME_FORMAT_24HOUR).strip
   end
-  
+
   def self.to12HourTime(time)
     unless time.blank?
       hm = time.split ':'
       time_with_hours_minutes(*hm).strftime(TIME_FORMAT_12HOUR).strip
     end
   end
-  
+
   # expects a single argument - the time argument in the format ##m or ##h
   # if argument has no m/h qualifier, assume m
   # returns a number of minutes
