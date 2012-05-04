@@ -1,14 +1,14 @@
 # Trak: track chunks of time from the command line
 
-Trak, v0.0.3 (Apr 30, 2012)  
+Trak, v0.0.4 (May 1, 2012)
 Written by Adam Sharp
 
 ## Notice
 
-Trak was recently (i.e., last week) a Perl script. It has been ported to
-Ruby, but the code really looks like it's taken a beating and is
-definitely NOT what I want it to ultimately look like. Much more
-ruby-fying to happen yet, as well as support for the excellent
+Trak was recently a Perl script. It has been ported to Ruby, but the
+code really looks like it's taken a beating and is definitely NOT what I
+want it to ultimately look like. Much more ruby-fying to happen yet, as
+well as support for the excellent
 [Chronic](https://github.com/mojombo/chronic) gem for natural language
 date parsing in the pipeline.
 
@@ -19,8 +19,8 @@ Stay tuned.
 
 ## Description
 
-Trak is a utility for Mac OS X that allows you to quickly make a record
-of how much time you've spent on various tasks throughout the day.
+Trak is a utility that allows you to quickly make a record of how much
+time you've spent on various tasks throughout the day.
 
 Work logs are stored in `/Users/yourusername/Documents/Tracker/` with
 the format `YEAR-MONTH-DAY-time-log.txt`.
