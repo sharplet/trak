@@ -10,7 +10,7 @@ datadir = "#{ENV['HOME']}/Documents/Tracker/"
 
 # define command line options
 opts = Trollop::options do
-  version "trak version 0.0.4"
+  version "trak version 0.1.0"
   banner <<-BANNER
 Trak: log chunks of time from the command line
 Usage:
