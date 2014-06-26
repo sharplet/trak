@@ -49,7 +49,6 @@ end
 # we're in...
 #
 # if we found a -r or -l option, ignore everything else
-Trak::breakpoint
 if opts[:report]
   MODE = 'report'
 # now check if the user wants edit mode

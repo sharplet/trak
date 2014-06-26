@@ -1,14 +1,9 @@
 module Trak
   require 'trak/core_ext/blank'
   require 'trak/core_ext/round_to_nearest'
-  require 'debugger'
 
   TIME_FORMAT_12HOUR = "%l:%M %p"
   TIME_FORMAT_24HOUR = "%k:%M"
-
-  def self.breakpoint(steps = 1)
-    debugger(steps) if ENV['TRAK_DEBUG'] == "1"
-  end
 
   # expects a hash of tasks mapped to time spent, and a sub-report name
   #   (e.g., work, personal)
