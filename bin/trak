@@ -41,16 +41,19 @@ Options:
 BANNER
   opt :date, "Specify the date of the log to work with",
       :type => String, :short => "-d"
-  opt :report, "Print a report for the specified date", :short => "-l"
+  opt :report, "Print a report for the specified date", :short => "-r"
+  opt :list, "Dump todays report file to stdout", :short => "-l"
   opt :edit, "Open the log for the specified date in EDITOR"
 end
 
 # all valid options have been processed, so figure out which mode
 # we're in...
 #
-# if we found a -r or -l option, ignore everything else
+# if we found a -r option, ignore everything else
 if opts[:report]
   MODE = 'report'
+elsif opts[:list]
+  MODE = 'list'
 # now check if the user wants edit mode
 elsif opts[:edit]
   MODE = 'edit'
@@ -128,6 +131,12 @@ if MODE == 'report'
     else
       STDERR.puts "No time log for today. Track some time first.\n"
     end
+  end
+
+elsif MODE == 'list'
+  if File.exist? filename
+    exec "cat", filename
+    exit
   end
 
 elsif MODE == 'edit'
