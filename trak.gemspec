@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = "trak"
-  s.version     = '0.0.5'
+  s.version     = '0.1.0'
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Adam Sharp"]
   s.email       = ["adsharp@me.com"]
@@ -17,6 +17,7 @@ you a breakdown."
 
   # If you have other dependencies, add them here
   s.add_dependency "trollop", "~> 1.16"
+  s.add_dependency "chronic", "~> 0.6"
 
   # If you need to check in files that aren't .rb files, add them here
   s.files        = Dir["{lib}/**/*.rb", "bin/*", "*.md"]

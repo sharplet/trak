@@ -1,9 +1,11 @@
 module Trak
   require 'trak/core_ext/blank'
   require 'trak/core_ext/round_to_nearest'
+  require 'trak/time_log'
+  require 'trak/exit'
 
-  TIME_FORMAT_12HOUR = "%l:%M %p"
-  TIME_FORMAT_24HOUR = "%k:%M"
+  TIME_FORMAT_12HOUR = "%-l:%M %p"
+  TIME_FORMAT_24HOUR = "%-k:%M"
 
   # expects a hash of tasks mapped to time spent, and a sub-report name
   #   (e.g., work, personal)
