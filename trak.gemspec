@@ -15,14 +15,13 @@ the total time you've spent for the day in your head. When you tell trak
 to report on your time spent for the day, it tallies each task and gives
 you a breakdown."
 
-  # If you have other dependencies, add them here
   s.add_dependency "trollop", "~> 1.16"
   s.add_dependency "chronic", "~> 0.6"
 
-  # If you need to check in files that aren't .rb files, add them here
+  s.add_development_dependency "cucumber"
+
   s.files        = Dir["{lib}/**/*.rb", "bin/*", "*.md"]
   s.require_path = 'lib'
 
-  # If you need an executable, add it here
   s.executables = ["trak"]
 end
