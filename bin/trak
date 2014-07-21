@@ -82,9 +82,7 @@ end
 filename = "#{datadir}#{fdate}-time-log.txt"
 
 if MODE == 'report'
-  Trak::log_for fdate do |l|
-    l.report
-  end
+  TimeLog.for_date_string(fdate).report
 
 elsif MODE == 'list'
   if File.exist? filename
