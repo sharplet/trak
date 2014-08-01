@@ -1,0 +1,3 @@
+[submodule "vendor/lightspeed"]
+	path = vendor/lightspeed
+	url = git@github.com:sharplet/lightspeed.git

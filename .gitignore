@@ -1,3 +1,6 @@
-.DS_Store
+# build products
+bin/trak-swift
 *.gem
+
+# bundler
 Gemfile.lock
